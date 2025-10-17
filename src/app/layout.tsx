@@ -119,7 +119,7 @@ const ppEditorialNew = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Juno - Proposal Management",
+  title: "Portal | Juno Performance Studio",
   description: "Secure access to proposal management system",
   icons: {
     icon: "/resources/favicons/favicon.ico",

@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     const { data: assets, error } = await supabase
       .from("assets")
       .select("*")
-      .eq("user_id", userId) // Use the fetched user ID instead of decoded.id
+      .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -47,16 +47,36 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Failed to fetch assets" }, { status: 500 });
     }
 
-    // Calculate items count for folders
+    // Calculate items count for folders (files + folders)
     const assetsWithItemCount = await Promise.all(
       assets.map(async (asset) => {
         if (asset.type === "folder") {
-          const { count } = await supabase
+          // Total items (files + folders)
+          const { count: totalCount } = await supabase
             .from("assets")
             .select("*", { count: "exact", head: true })
             .eq("parent_id", asset.id);
-          
-          return { ...asset, items: count || 0 };
+
+          // Files only
+          const { count: fileCount } = await supabase
+            .from("assets")
+            .select("*", { count: "exact", head: true })
+            .eq("parent_id", asset.id)
+            .eq("type", "file");
+
+          // Folders only
+          const { count: folderCount } = await supabase
+            .from("assets")
+            .select("*", { count: "exact", head: true })
+            .eq("parent_id", asset.id)
+            .eq("type", "folder");
+
+          return {
+            ...asset,
+            items: totalCount || 0,
+            fileCount: fileCount || 0,
+            folderCount: folderCount || 0,
+          };
         }
         return asset;
       })

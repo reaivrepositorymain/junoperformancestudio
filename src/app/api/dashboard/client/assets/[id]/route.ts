@@ -107,7 +107,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 // Delete asset
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = await context.params; // Add await here
+        const { id } = await context.params;
 
         // Extract token from cookies
         const token = request.headers
@@ -123,11 +123,11 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
         // Verify token
         const decoded = jwt.verify(token, SECRET_KEY) as { email: string };
 
-        // Get user ID from email
+        // Get user ID from email (use comp_email for consistency)
         const { data: userData, error: userError } = await supabase
             .from("users")
             .select("id")
-            .eq("email", decoded.email)
+            .eq("comp_email", decoded.email)
             .single();
 
         if (userError || !userData) {

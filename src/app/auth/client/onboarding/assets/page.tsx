@@ -334,63 +334,74 @@ export default function CreativesUploadPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#E84912]/10 via-white to-[#438D34]/10">
-            <Card className="w-full max-w-2xl p-8 shadow-2xl rounded-2xl border border-gray-500">
-                <h2 className="text-3xl font-extrabold mb-2 text-center text-[#E84912] flex items-center justify-center gap-2">
-                    Upload Your Assets
-                </h2>
-                <p className="mb-4 text-center text-gray-600">
-                    Drag and drop files or folders below.<br />
-                    All uploads will go to your <b className="text-[#438D34]">Creatives</b> folder.<br />
-                    <span className="text-xs text-[#EA6D51]">You can skip this step if you want.</span>
-                </p>
-                <div
-                    ref={dropRef}
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    className="border-2 border-dashed border-[#E84912] rounded-xl p-8 mb-6 flex flex-col items-center justify-center bg-gradient-to-br from-white via-orange-50 to-[#FDD49F]/30 cursor-pointer transition-all hover:shadow-lg hover:bg-orange-50"
-                >
-                    <div className="flex items-center gap-4 mb-3">
-                        <CloudUpload size={48} className="text-black drop-shadow animate-pulse" />
-                    </div>
-                    <span className="text-gray-700 font-semibold mb-1 text-lg">
-                        Drop files or folders here
-                    </span>
-                    <span className="text-gray-400 text-xs mb-2">
-                        You can drag multiple files or entire folders
-                    </span>
-                    {uploading && (
-                        <div className="w-full flex flex-col items-center mt-2">
-                            <span className="text-[#E84912] font-semibold mb-1 animate-pulse">Uploading...</span>
-                            <div className="w-2/3 h-2 bg-orange-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#E84912] animate-upload-progress" style={{ width: "80%" }} />
-                            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E84912]/10 via-white to-[#438D34]/10 p-4">
+            <div className="w-full max-w-4xl flex flex-col md:flex-row rounded-2xl shadow-2xl border-2 border-slate-300 bg-white overflow-hidden">
+                {/* Left: Upload UI */}
+                <div className="flex-1 flex flex-col justify-center px-8 py-12">
+                    <h2 className="text-3xl font-extrabold mb-2 text-[#E84912] flex items-center gap-2">
+                        Upload Your Assets
+                    </h2>
+                    <p className="mb-4 text-gray-800">
+                        Drag and drop files or folders below.<br />
+                        All uploads will go to your <b className="text-black">Creatives</b> folder.<br />
+                        <span className="text-xs text-gray-500">You can skip this step if you want.</span>
+                    </p>
+                    <div
+                        ref={dropRef}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        className="border-2 border-dashed border-black rounded-xl p-8 mb-6 flex flex-col items-center justify-center bg-gray-50 cursor-pointer transition-all hover:shadow-lg hover:bg-gray-100"
+                    >
+                        <div className="flex items-center gap-4 mb-3">
+                            <CloudUpload size={48} className="text-black drop-shadow animate-pulse" />
                         </div>
-                    )}
-                </div>
-                <div className="mb-6">
-                    <h3 className="font-semibold mb-2 text-[#438D34]">Queued Files/Folders:</h3>
-                    <div className="border rounded-xl p-4 bg-gradient-to-br from-white via-orange-50 to-[#FDD49F]/30 min-h-[48px] flex flex-col justify-center shadow-sm">
-                        {buildNestedTree(treeData).length === 0 ? (
-                            <span className="text-gray-400 text-sm text-center">No files or folders yet.</span>
-                        ) : (
-                            <Tree elements={buildNestedTree(treeData)}>
-                                {renderTree(buildNestedTree(treeData))}
-                            </Tree>
+                        <span className="text-black font-semibold mb-1 text-lg">
+                            Drop files or folders here
+                        </span>
+                        <span className="text-gray-500 text-xs mb-2">
+                            You can drag multiple files or entire folders
+                        </span>
+                        {uploading && (
+                            <div className="w-full flex flex-col items-center mt-2">
+                                <span className="text-black font-semibold mb-1 animate-pulse">Uploading...</span>
+                                <div className="w-2/3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="h-full bg-black animate-upload-progress" style={{ width: "80%" }} />
+                                </div>
+                            </div>
                         )}
                     </div>
+                    <div className="mb-6">
+                        <h3 className="font-semibold mb-2 text-black">Queued Files/Folders:</h3>
+                        <div className="border border-black rounded-xl p-4 bg-gray-50 min-h-[48px] flex flex-col justify-center shadow-sm">
+                            {buildNestedTree(treeData).length === 0 ? (
+                                <span className="text-gray-500 text-sm text-center">No files or folders yet.</span>
+                            ) : (
+                                <Tree elements={buildNestedTree(treeData)}>
+                                    {renderTree(buildNestedTree(treeData))}
+                                </Tree>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex justify-between mt-4">
+                        <Button variant="outline" className="rounded-lg border-black text-black hover:bg-gray-100" onClick={handleSkip}>Skip</Button>
+                        <Button
+                            className="bg-black text-white font-bold rounded-lg shadow-md hover:bg-gray-900"
+                            onClick={handleFinalSubmit}
+                            disabled={uploading || treeData.length === 0}
+                        >
+                            Final Submit
+                        </Button>
+                    </div>
                 </div>
-                <div className="flex justify-between mt-4">
-                    <Button variant="outline" className="rounded-lg border-[#EA6D51] text-[#EA6D51] hover:bg-orange-50" onClick={handleSkip}>Skip</Button>
-                    <Button
-                        className="bg-gradient-to-r from-[#E84912] via-[#F97316] to-[#EA6D51] text-white font-bold rounded-lg shadow-md hover:from-[#d63d0e] hover:to-[#EA6D51]"
-                        onClick={handleFinalSubmit}
-                        disabled={uploading || treeData.length === 0}
-                    >
-                        Final Submit
-                    </Button>
+                {/* Right: Juno Isologo */}
+                <div className="flex-1 flex items-center justify-center bg-white">
+                    <img
+                        src="/resources/favicons/isologos.png"
+                        alt="Juno Isologo"
+                        className="w-64 h-64 object-contain drop-shadow-xl"
+                    />
                 </div>
-            </Card>
+            </div>
         </div>
     );
 }

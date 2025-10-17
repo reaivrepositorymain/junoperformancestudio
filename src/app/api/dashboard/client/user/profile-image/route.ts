@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
         .from("users")
         .select("profile_image")
-        .eq("email", decoded.email)
+        .eq("comp_email", decoded.email)
         .single();
 
     if (error || !data?.profile_image) {

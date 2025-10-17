@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const questions = [
@@ -156,6 +157,7 @@ export default function ClientOnboardingForm() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   const current = questions[step];
   const progress = Math.round(((step + 1) / questions.length) * 100);
@@ -199,7 +201,7 @@ export default function ClientOnboardingForm() {
         });
         setTimeout(() => {
           // Redirect to the client dashboard after successful submission
-          window.location.href = "/dashboard/client";
+          router.push("/auth/client/onboarding/assets");
         }, 2000);
       } else {
         const errorData = await response.json();

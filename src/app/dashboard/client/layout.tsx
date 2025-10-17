@@ -74,38 +74,13 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { supabase } from "@/lib/supabase";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import { AssetType, SidebarNavigationItem, DashboardLayoutProps } from "@/types/client-dashboard";
+import { Separator } from "@/components/ui/separator";
 
 const junoColors = [
     "#E84912", "#F6A100", "#D7770F", "#53B36A", "#438D34",
     "#67ACAA", "#64C2C6", "#3669B2", "#2953A1", "#719AD1"
 ];
-
-type AssetType = {
-    id: string;
-    name: string;
-    type: string;
-    mimetype?: string;
-    size?: number;
-    storage_path?: string;
-    created_at?: string;
-    updated_at?: string;
-    parent_id?: string | null;
-    items?: number;
-};
-
-// Define a consistent type for sidebar navigation items
-type SidebarNavigationItem = {
-    name: string;
-    href: string;
-    icon: React.ComponentType<any>;
-    isSpecial?: boolean;
-    folderId?: string;
-    itemCount?: number;
-};
-
-interface DashboardLayoutProps {
-    children: React.ReactNode;
-}
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -176,16 +151,53 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     useEffect(() => {
         fetchFolders();
+
+        // Listen for custom event from page.tsx
+        const handleAssetsUpdated = () => {
+            fetchFolders();
+        };
+        window.addEventListener("assetsUpdated", handleAssetsUpdated);
+
+        // Subscribe to real-time changes in the assets table
+        const channel = supabase
+            .channel('folders-realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'assets',
+                },
+                (payload) => {
+                    const newRow = payload.new as AssetType | undefined;
+                    const oldRow = payload.old as AssetType | undefined;
+                    if (
+                        newRow?.type === 'folder' ||
+                        oldRow?.type === 'folder' ||
+                        newRow?.type === 'file' ||
+                        oldRow?.type === 'file'
+                    ) {
+                        fetchFolders();
+                    }
+                }
+            )
+            .subscribe();
+
+        // Cleanup on unmount
+        return () => {
+            channel.unsubscribe();
+            window.removeEventListener("assetsUpdated", handleAssetsUpdated);
+        };
     }, []);
 
     // Create sidebar navigation with consistent typing
     const sidebarNavigation: SidebarNavigationItem[] = [
         {
-            name: "All Files",
+            name: "All Folders", // <-- Changed label here
             href: "/dashboard/client",
             icon: FolderOpen,
             isSpecial: true,
-            itemCount: 0 // Will be calculated from all assets
+            itemCount: folders.length // Show total folders count
         },
         ...folders.map((folder): SidebarNavigationItem => ({
             name: folder.name,
@@ -599,8 +611,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                     ) : (
                                         sidebarNavigation.map((item, index) => {
                                             const isActive =
-                                                (item.name === "All Files" && !currentFolder) ||
-                                                (item.name !== "All Files" && currentFolder === item.name);
+                                                (item.name === "All Folders" && !currentFolder) ||
+                                                (item.name !== "All Folders" && currentFolder === item.name);
 
                                             const IconComponent = item.icon;
                                             const itemColor = item.isSpecial

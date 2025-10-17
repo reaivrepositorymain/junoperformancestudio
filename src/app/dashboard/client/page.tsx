@@ -49,29 +49,7 @@ import {
   FileIcon
 } from "lucide-react";
 import { toast } from "sonner";
-
-type AssetType = {
-  id: string;
-  name: string;
-  type: string;
-  mimetype?: string;
-  size?: number;
-  storage_path?: string;
-  created_at?: string;
-  updated_at?: string;
-  parent_id?: string | null;
-  items?: number;
-};
-
-interface DirectoryItem {
-  type: 'file' | 'folder';
-  name: string;
-  path: string;
-  file?: File;
-  size?: number;
-  mimetype?: string;
-  children?: DirectoryItem[];
-}
+import { AssetType, DirectoryItem } from "@/types/client-dashboard";
 
 export default function DashboardClientPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -102,6 +80,12 @@ export default function DashboardClientPage() {
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState("");
   const [folderSelectionType, setFolderSelectionType] = useState<"existing" | "new">("existing");
+  const [previewAsset, setPreviewAsset] = useState<AssetType | null>(null);
+  const SUPABASE_URL = "https://orzqvkuqzvnltakapxrh.supabase.co/storage/v1/object/public/user-assets/";
+
+  function getPublicUrl(storagePath: string) {
+    return `${SUPABASE_URL}${storagePath}`;
+  }
 
   const campaigns = [
     {
@@ -127,7 +111,7 @@ export default function DashboardClientPage() {
   useEffect(() => {
     const folderParam = searchParams.get('folder');
     if (folderParam) {
-      setCurrentPath([folderParam]);
+      setCurrentPath(folderParam.split('/').filter(Boolean));
     } else {
       setCurrentPath([]);
     }
@@ -171,6 +155,7 @@ export default function DashboardClientPage() {
       if (res.ok) {
         toast.success("Renamed successfully!");
         await fetchAssets();
+        window.dispatchEvent(new Event("assetsUpdated"));
         setShowRenameDialog(false);
         setRenameTarget(null);
         setRenameValue("");
@@ -196,6 +181,7 @@ export default function DashboardClientPage() {
       if (res.ok) {
         toast.success("Deleted successfully!");
         await fetchAssets();
+        window.dispatchEvent(new Event("assetsUpdated"));
         setShowDeleteDialog(false);
         setDeleteTarget(null);
       } else {
@@ -211,15 +197,45 @@ export default function DashboardClientPage() {
 
   // Handle multiple file uploads
   const handleMultipleFileUpload = async (files: File[]) => {
-    // Store the files and show folder selection dialog
     setUploadedFiles(files);
 
-    // Set initial selection type based on available folders
-    const currentAvailableFolders = assets.filter(a => a.type === "folder" && a.parent_id === getCurrentParentId());
-    setFolderSelectionType(currentAvailableFolders.length > 0 ? "existing" : "new");
-
-    setShowFolderSelection(true);
-    setShowAddDialog(false); // Close the add dialog
+    if (isRoot) {
+      // Only show folder selection dialog in root
+      const currentAvailableFolders = assets.filter(a => a.type === "folder" && a.parent_id === null);
+      setFolderSelectionType(currentAvailableFolders.length > 0 ? "existing" : "new");
+      setShowFolderSelection(true);
+      setShowAddDialog(false);
+    } else {
+      // Directly upload to current parent folder
+      setIsCreating(true);
+      try {
+        const parentId = getCurrentParentId();
+        const uploadPromises = files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("parent_id", parentId || "");
+          return fetch("/api/dashboard/client/assets/upload", {
+            method: "POST",
+            body: formData,
+          });
+        });
+        const responses = await Promise.all(uploadPromises);
+        const successCount = responses.filter(res => res.ok).length;
+        if (successCount === files.length) {
+          toast.success(`${successCount} files uploaded successfully!`);
+        } else {
+          toast.warning(`${successCount}/${files.length} files uploaded successfully`);
+        }
+        await fetchAssets();
+        window.dispatchEvent(new Event("assetsUpdated"));
+      } catch (error) {
+        toast.error("Upload failed");
+      } finally {
+        setIsCreating(false);
+        setShowAddDialog(false);
+        setUploadedFiles([]);
+      }
+    }
   };
 
   const handleFinalUpload = async () => {
@@ -278,6 +294,7 @@ export default function DashboardClientPage() {
       }
 
       await fetchAssets(); // Refresh the assets list
+      window.dispatchEvent(new Event("assetsUpdated"));
 
       // Reset states - update the initial folderSelectionType
       setShowFolderSelection(false);
@@ -554,6 +571,7 @@ export default function DashboardClientPage() {
 
       // Refresh the assets list to show new folders and files
       await fetchAssets();
+      window.dispatchEvent(new Event("assetsUpdated"));
 
       // Close dialogs and reset state
       setShowAddDialog(false);
@@ -586,6 +604,7 @@ export default function DashboardClientPage() {
       if (res.ok) {
         toast.success(`Folder "${newName}" created successfully!`);
         await fetchAssets(); // Refresh the assets list
+        window.dispatchEvent(new Event("assetsUpdated"));
         setShowAddDialog(false);
         setNewName("");
       } else {
@@ -609,16 +628,14 @@ export default function DashboardClientPage() {
   };
 
   // Update the navigation function to use window.history instead of setCurrentPath
-  const navigateToFolder = (folderName?: string) => {
-    if (folderName) {
-      // Navigate to specific folder
-      const newUrl = `/dashboard/client?folder=${encodeURIComponent(folderName)}`;
+  const navigateToFolder = (path?: string[]) => {
+    if (path && path.length > 0) {
+      const folderParam = encodeURIComponent(path.join("/"));
+      const newUrl = `/dashboard/client?folder=${folderParam}`;
       window.history.pushState({}, '', newUrl);
-      setCurrentPath([folderName]);
+      setCurrentPath(path);
     } else {
-      // Navigate to root
-      const newUrl = `/dashboard/client`;
-      window.history.pushState({}, '', newUrl);
+      window.history.pushState({}, '', `/dashboard/client`);
       setCurrentPath([]);
     }
   };
@@ -685,6 +702,7 @@ export default function DashboardClientPage() {
     });
 
   const availableFolders = assets.filter(a => a.type === "folder" && a.parent_id === getCurrentParentId());
+  const isRoot = currentPath.length === 0;
 
   return (
     <div className="flex h-[calc(100vh-4rem)]">
@@ -783,7 +801,7 @@ export default function DashboardClientPage() {
             <BreadcrumbItem>
               <BreadcrumbLink
                 href="#"
-                onClick={() => navigateToFolder()}
+                onClick={() => navigateToFolder([])}
               >
                 Home
               </BreadcrumbLink>
@@ -797,10 +815,7 @@ export default function DashboardClientPage() {
                   ) : (
                     <BreadcrumbLink
                       href="#"
-                      onClick={() => {
-                        const newPath = currentPath.slice(0, idx + 1);
-                        navigateToFolder(newPath[newPath.length - 1]);
-                      }}
+                      onClick={() => navigateToFolder(currentPath.slice(0, idx + 1))}
                     >
                       {folder}
                     </BreadcrumbLink>
@@ -858,7 +873,9 @@ export default function DashboardClientPage() {
                       className={`group relative h-48 flex flex-col justify-between border border-gray-200 rounded-2xl cursor-pointer bg-gradient-to-br ${cardBgColors[index % cardBgColors.length]}`}
                       onClick={() => {
                         if (asset.type === "folder") {
-                          navigateToFolder(asset.name);
+                          navigateToFolder([...currentPath, asset.name]);
+                        } else {
+                          setPreviewAsset(asset);
                         }
                       }}
                     >
@@ -1423,37 +1440,39 @@ export default function DashboardClientPage() {
                   </label>
                 )}
 
-                {/* New Folder Option */}
-                <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${folderSelectionType === "new" ? "border-[#E84912] bg-[#E84912]/5" : "border-gray-200"
-                  }`}>
-                  <input
-                    type="radio"
-                    name="folderChoice"
-                    value="new"
-                    checked={folderSelectionType === "new"}
-                    onChange={() => setFolderSelectionType("new")}
-                    className="mt-0.5 text-[#E84912] focus:ring-[#E84912]"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Folder className="w-4 h-4 text-green-500" />
-                      <span className="font-medium text-gray-900">New Folder</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Create a new folder in {currentPath.length > 0 ? currentPath.join(' / ') : 'current location'} for these files
-                    </p>
+                {/* New Folder Option - Only show in root */}
+                {isRoot && (
+                  <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${folderSelectionType === "new" ? "border-[#E84912] bg-[#E84912]/5" : "border-gray-200"
+                    }`}>
+                    <input
+                      type="radio"
+                      name="folderChoice"
+                      value="new"
+                      checked={folderSelectionType === "new"}
+                      onChange={() => setFolderSelectionType("new")}
+                      className="mt-0.5 text-[#E84912] focus:ring-[#E84912]"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Folder className="w-4 h-4 text-green-500" />
+                        <span className="font-medium text-gray-900">New Folder</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Create a new folder in Home for these files
+                      </p>
 
-                    {folderSelectionType === "new" && (
-                      <Input
-                        placeholder="Enter folder name..."
-                        value={newFolderName}
-                        onChange={(e) => setNewFolderName(e.target.value)}
-                        autoFocus
-                        className="w-full"
-                      />
-                    )}
-                  </div>
-                </label>
+                      {folderSelectionType === "new" && (
+                        <Input
+                          placeholder="Enter folder name..."
+                          value={newFolderName}
+                          onChange={(e) => setNewFolderName(e.target.value)}
+                          autoFocus
+                          className="w-full"
+                        />
+                      )}
+                    </div>
+                  </label>
+                )}
               </div>
 
               {/* File Preview */}
@@ -1520,6 +1539,55 @@ export default function DashboardClientPage() {
               >
                 {isCreating ? "Uploading..." : `Upload ${uploadedFiles.length} Files`}
               </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {previewAsset && (
+        <Dialog open={!!previewAsset} onOpenChange={() => setPreviewAsset(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Preview: {previewAsset.name}</DialogTitle>
+              <DialogDescription>
+                {previewAsset.mimetype}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center justify-center py-4">
+              {previewAsset.mimetype?.startsWith("image/") ? (
+                <img
+                  src={getPublicUrl(previewAsset.storage_path ?? "")}
+                  alt={previewAsset.name}
+                  className="max-h-96 rounded-lg shadow"
+                />
+              ) : previewAsset.mimetype === "application/pdf" ? (
+                <iframe
+                  src={getPublicUrl(previewAsset.storage_path ?? "")}
+                  title={previewAsset.name}
+                  className="w-full h-96 rounded-lg"
+                />
+              ) : previewAsset.mimetype?.includes("sheet") || previewAsset.mimetype?.includes("excel") ? (
+                <div className="w-full h-96 flex items-center justify-center bg-gray-50 rounded-lg">
+                  <span className="text-gray-500">Excel preview not supported. <a href={getPublicUrl(previewAsset.storage_path ?? "")} target="_blank" rel="noopener noreferrer" className="text-[#E84912] underline">Download</a></span>
+                </div>
+              ) : (
+                <div className="w-full h-96 flex items-center justify-center bg-gray-50 rounded-lg">
+                  <span className="text-gray-500">Preview not available. <a href={getPublicUrl(previewAsset.storage_path ?? "")} target="_blank" rel="noopener noreferrer" className="text-[#E84912] underline">Download</a></span>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <button className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Close</button>
+              </DialogClose>
+              <a
+                href={getPublicUrl(previewAsset.storage_path ?? "")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded bg-[#E84912] text-white hover:bg-[#d63d0e]"
+              >
+                Download
+              </a>
             </DialogFooter>
           </DialogContent>
         </Dialog>

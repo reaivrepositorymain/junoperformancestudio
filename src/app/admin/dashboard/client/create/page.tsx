@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Lock, PlusCircle, Info, AtSign } from "lucide-react";
+import { User, Mail, PlusCircle, Info, AtSign } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -17,16 +17,6 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import Loader from "@/components/kokonutui/loader"; // Import the loader component
-
-// Simple random password generator
-function generatePassword(length = 12) {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
-    let pwd = "";
-    for (let i = 0; i < length; i++) {
-        pwd += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return pwd;
-}
 
 // Generate client email from name
 function generateClientEmail(name: string) {
@@ -43,18 +33,12 @@ export default function CreateClientPage() {
         defaultValues: {
             name: "",
             email: "",
-            password: "",
         },
     });
 
     const watchName = form.watch("name");
     const [clientEmail, setClientEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false); // State to control the loader
-
-    // Auto-generate password on mount
-    useEffect(() => {
-        form.setValue("password", generatePassword(12));
-    }, [form]);
 
     // Auto-generate client email based on name
     useEffect(() => {
@@ -154,7 +138,8 @@ export default function CreateClientPage() {
             <Alert className="mb-4 md:mb-6 border-blue-200 bg-blue-50">
                 <Info className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-xs sm:text-sm text-blue-800">
-                    After creating the client, an email will be sent to the provided address with login credentials and onboarding information.
+                    After creating the client, an email will be sent to the provided address with a unique account activation link.
+                    This link will expire after a limited time for security.
                 </AlertDescription>
             </Alert>
 
@@ -173,7 +158,7 @@ export default function CreateClientPage() {
                                     <div className="relative">
                                         <Input
                                             {...field}
-                                            placeholder="e.g. MUSH NATURALS"
+                                            placeholder="e.g. Company Name"
                                             className="pl-10 md:pl-12 pr-4 md:pr-6 py-4 md:py-6 text-sm md:text-base"
                                             required
                                         />
@@ -196,13 +181,13 @@ export default function CreateClientPage() {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-sm md:text-base">Contact Email Address</FormLabel>
+                                <FormLabel className="text-sm md:text-base">Personal Email Address</FormLabel>
                                 <FormControl>
                                     <div className="relative">
                                         <Input
                                             {...field}
                                             type="email"
-                                            placeholder="client@email.com"
+                                            placeholder="contact@email.com"
                                             className="pl-10 md:pl-12 pr-4 md:pr-6 py-4 md:py-6 text-sm md:text-base"
                                             required
                                         />
@@ -211,32 +196,6 @@ export default function CreateClientPage() {
                                 </FormControl>
                                 <FormDescription className="text-xs md:text-sm">
                                     Login credentials will be sent to this email.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-sm md:text-base">
-                                    Password <span className="text-gray-500 text-xs md:text-sm">(Auto Generated)</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                        <Input
-                                            {...field}
-                                            type="text"
-                                            readOnly
-                                            className="pl-10 md:pl-12 pr-4 md:pr-6 py-4 md:py-6 text-sm md:text-base bg-gray-100 cursor-not-allowed"
-                                        />
-                                        <Lock className="absolute left-3 top-3 md:top-4 h-4 w-4 md:h-5 md:w-5 text-gray-400 pointer-events-none" />
-                                    </div>
-                                </FormControl>
-                                <FormDescription className="text-xs md:text-sm">
-                                    A secure password is generated automatically.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

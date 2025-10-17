@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageProvider";
+import { useMediaQuery } from "react-responsive";
 
 const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -49,11 +50,9 @@ export default function LoginPage() {
     const [isVisible, setIsVisible] = useState(true);
     const [activeTab, setActiveTab] = useState<'client' | 'admin'>('client');
     const { t } = useLanguage();
-
-    const handleAdminLogin = async (data: LoginFormData) => {
-        // Your admin login logic here
-        console.log('Admin login:', data);
-    };
+    const isMobile = useMediaQuery({ maxWidth: 639 });
+    const isTablet = useMediaQuery({ minWidth: 640, maxWidth: 1023 });
+    const isDesktop = useMediaQuery({ minWidth: 1024 });
 
     // Setup separate forms for client and admin
     const clientForm = useForm<LoginFormData>({
@@ -233,7 +232,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-white p-2 sm:p-4 lg:p-6">
+        <div
+            className={`min-h-screen flex items-center justify-center bg-white ${isMobile ? "p-2" : isTablet ? "p-4" : "p-6"
+                }`}
+        >
             <Toaster
                 richColors={false}
                 position="top-center"
@@ -248,152 +250,130 @@ export default function LoginPage() {
 
             {/* Animated Shapes Background */}
             <div className="absolute inset-0 pointer-events-none z-0">
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-1.png"
-                    alt=""
-                    width={180}
-                    height={180}
-                    className="absolute top-10 left-10 animate-shape1 opacity-70"
-                    style={{ zIndex: 1 }}
-                />
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-2.png"
-                    alt=""
-                    width={120}
-                    height={120}
-                    className="absolute top-1/2 left-0 animate-shape2 opacity-60"
-                    style={{ zIndex: 1 }}
-                />
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-3.png"
-                    alt=""
-                    width={140}
-                    height={140}
-                    className="absolute bottom-10 right-10 animate-shape3 opacity-60"
-                    style={{ zIndex: 1 }}
-                />
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-4.png"
-                    alt=""
-                    width={100}
-                    height={100}
-                    className="absolute bottom-1/3 left-1/2 animate-shape4 opacity-50"
-                    style={{ zIndex: 1 }}
-                />
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-5.png"
-                    alt=""
-                    width={90}
-                    height={90}
-                    className="absolute top-1/4 right-1/4 animate-shape5 opacity-50"
-                    style={{ zIndex: 1 }}
-                />
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-6.png"
-                    alt=""
-                    width={110}
-                    height={110}
-                    className="absolute bottom-0 left-1/4 animate-shape6 opacity-40"
-                    style={{ zIndex: 1 }}
-                />
-                {/* Duplicate shape for top right */}
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-1.png"
-                    alt=""
-                    width={180}
-                    height={180}
-                    className="absolute top-10 right-10 animate-shape1 opacity-70"
-                    style={{ zIndex: 1 }}
-                />
-                {/* Duplicate shape for middle right */}
-                <Image
-                    src="/resources/shapes/RECURSOS GRAFICOS-2.png"
-                    alt=""
-                    width={120}
-                    height={120}
-                    className="absolute top-1/2 right-0 animate-shape2 opacity-60"
-                    style={{ zIndex: 1 }}
-                />
+                {isMobile ? (
+                    <>
+                        <Image
+                            src="/resources/shapes/RECURSOS GRAFICOS-1.png"
+                            alt=""
+                            width={100}
+                            height={100}
+                            className="absolute top-4 left-4 animate-shape1 opacity-60"
+                            style={{ zIndex: 1 }}
+                        />
+                        <Image
+                            src="/resources/shapes/RECURSOS GRAFICOS-3.png"
+                            alt=""
+                            width={80}
+                            height={80}
+                            className="absolute bottom-4 right-4 animate-shape3 opacity-50"
+                            style={{ zIndex: 1 }}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-1.png" alt="" width={180} height={180} className="absolute top-10 left-10 animate-shape1 opacity-70" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-2.png" alt="" width={120} height={120} className="absolute top-1/2 left-0 animate-shape2 opacity-60" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-3.png" alt="" width={140} height={140} className="absolute bottom-10 right-10 animate-shape3 opacity-60" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-4.png" alt="" width={100} height={100} className="absolute bottom-1/3 left-1/2 animate-shape4 opacity-50" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-5.png" alt="" width={90} height={90} className="absolute top-1/4 right-1/4 animate-shape5 opacity-50" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-6.png" alt="" width={110} height={110} className="absolute bottom-0 left-1/4 animate-shape6 opacity-40" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-1.png" alt="" width={180} height={180} className="absolute top-10 right-10 animate-shape1 opacity-70" style={{ zIndex: 1 }} />
+                        <Image src="/resources/shapes/RECURSOS GRAFICOS-2.png" alt="" width={120} height={120} className="absolute top-1/2 right-0 animate-shape2 opacity-60" style={{ zIndex: 1 }} />
+                    </>
+                )}
             </div>
 
-            <Card className="rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl p-0 w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl border-2 border-gray-200 bg-white flex flex-col overflow-hidden">
+            <Card
+                className={`rounded-xl shadow-2xl p-0 w-full ${isMobile
+                    ? "max-w-xs"
+                    : isTablet
+                        ? "max-w-lg"
+                        : "max-w-4xl"
+                    } border-2 border-gray-200 bg-white flex flex-col overflow-hidden`}
+            >
                 {/* Content Container with Smooth Transition */}
-                <div className="flex flex-col lg:flex-row overflow-hidden min-h-[500px] lg:min-h-[670px] relative">
+                <div
+                    className={`flex ${isDesktop ? "flex-row" : isTablet ? "flex-col" : "flex-col"
+                        } overflow-hidden min-h-[500px] ${isDesktop ? "lg:min-h-[670px]" : isTablet ? "md:min-h-[600px]" : ""
+                        } relative`}
+                >
                     {/* Client Login Layout */}
-                    <div className={`absolute inset-0 flex flex-col lg:flex-row transition-all duration-700 ease-in-out transform ${activeTab === 'client' ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-                        {/* Left: Logo and branding - Hidden on mobile, visible on desktop */}
-                        <div className="hidden lg:flex bg-white flex-col items-center justify-center px-8 py-12 lg:w-1/2 w-full">
-                            <div className="mb-6">
-                                <Image
-                                    src="/resources/favicons/isologos.png"
-                                    alt="Juno logo"
-                                    width={200}
-                                    height={96}
-                                    className="drop-shadow-2xl w-56"
-                                    priority
-                                />
-                            </div>
-                            <h2 className="text-xl lg:text-2xl font-bold text-black/90 mb-5 text-center">
-                                {t("login.clientPortal")}
-                            </h2>
-
-                            <p className="text-black/80 text-center mb-6 text-base lg:text-lg leading-relaxed max-w-sm">
-                                {t("login.clientPortalDesc")}
-                            </p>
-
-                            <div className="flex items-center space-x-6 text-black/70">
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-black rounded-full"></div>
-                                    <span className="text-sm">{t("login.secure")}</span>
+                    <div
+                        className={`absolute inset-0 flex ${isDesktop ? "flex-row" : isTablet ? "flex-col" : "flex-col"
+                            } transition-all duration-700 ease-in-out transform ${activeTab === "client"
+                                ? "translate-x-0 opacity-100"
+                                : isDesktop
+                                    ? "translate-x-full opacity-0"
+                                    : "opacity-0"
+                            }`}
+                    >
+                        {/* Left: Logo and branding - Hidden on mobile/tablet, visible on desktop */}
+                        {isDesktop && (
+                            <div className="bg-white flex-col items-center justify-center px-8 py-12 lg:w-1/2 w-full hidden lg:flex">
+                                <div className="mb-6">
+                                    <Image
+                                        src="/resources/favicons/isologos.png"
+                                        alt="Juno logo"
+                                        width={200}
+                                        height={96}
+                                        className="drop-shadow-2xl w-56"
+                                        priority
+                                    />
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-black rounded-full"></div>
-                                    <span className="text-sm">{t("login.fast")}</span>
+                                <h2 className="text-xl lg:text-2xl font-bold text-black/90 mb-5 text-center">
+                                    {t("login.clientPortal")}
+                                </h2>
+                                <p className="text-black/80 text-center mb-6 text-base lg:text-lg leading-relaxed max-w-sm">
+                                    {t("login.clientPortalDesc")}
+                                </p>
+                                <div className="flex items-center space-x-6 text-black/70">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-black rounded-full"></div>
+                                        <span className="text-sm">{t("login.secure")}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-black rounded-full"></div>
+                                        <span className="text-sm">{t("login.fast")}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-black rounded-full"></div>
+                                        <span className="text-sm">{t("login.reliable")}</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-black rounded-full"></div>
-                                    <span className="text-sm">{t("login.reliable")}</span>
+                                <div className="mt-10 text-xs text-black/50 text-center">
+                                    &copy; {new Date().getFullYear()} Juno. {t("login.rights")}
                                 </div>
                             </div>
-
-                            <div className="mt-10 text-xs text-black/50 text-center">
-                                &copy; {new Date().getFullYear()} Juno. {t("login.rights")}
-                            </div>
-                        </div>
+                        )}
 
                         {/* Right: Client Login Form */}
-                        <div className="flex flex-col justify-center px-6 sm:px-8 py-8 sm:py-10 lg:py-40 lg:w-1/2 w-full bg-black">
+                        <div
+                            className={`flex flex-col justify-center px-6 sm:px-8 py-8 ${isDesktop ? "lg:py-40 lg:w-1/2" : "w-full"
+                                } bg-black`}
+                        >
                             <div className="max-w-sm mx-auto w-full">
                                 {/* Tab Navigation - Modern Toggle Buttons */}
                                 <div className="flex justify-center items-center mb-6">
                                     <div className="bg-white/20 p-1 rounded-full flex gap-1">
                                         <button
-                                            onClick={() => setActiveTab('client')}
-                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === 'client'
-                                                ? 'bg-white text-black shadow-md'
-                                                : 'text-white/70 hover:text-white'
+                                            onClick={() => setActiveTab("client")}
+                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === "client"
+                                                ? "bg-white text-black shadow-md"
+                                                : "text-white/70 hover:text-white"
                                                 }`}
                                         >
                                             Client
                                         </button>
-
                                         <button
-                                            onClick={() => setActiveTab('admin')}
-                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === 'admin'
-                                                ? 'bg-white text-black shadow-md'
-                                                : 'text-white/70 hover:text-white'
+                                            onClick={() => setActiveTab("admin")}
+                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === "admin"
+                                                ? "bg-white text-black shadow-md"
+                                                : "text-white/70 hover:text-white"
                                                 }`}
                                         >
                                             Admin
                                         </button>
                                     </div>
-                                </div>
-
-                                {/* Mobile logo - only visible on mobile */}
-                                <div className="lg:hidden mb-6 text-center">
-                                    <h2 className="text-lg sm:text-xl font-semibold text-white/90 mb-4">
-                                        Client Login
-                                    </h2>
                                 </div>
 
                                 <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-white tracking-tight">
@@ -405,7 +385,10 @@ export default function LoginPage() {
 
                                 <FormProvider {...clientForm}>
                                     <form
-                                        onSubmit={clientForm.handleSubmit((data) => handleLogin(data, false), onClientInvalid)}
+                                        onSubmit={clientForm.handleSubmit(
+                                            (data) => handleLogin(data, false),
+                                            onClientInvalid
+                                        )}
                                         className="space-y-5 sm:space-y-6"
                                     >
                                         <FormItem>
@@ -460,14 +443,17 @@ export default function LoginPage() {
                                                             className="w-4 h-4 sm:w-5 sm:h-5 border-2 rounded-full animate-spin"
                                                             style={{
                                                                 borderColor: `${junoColors[currentJunoColorIndex]}30`,
-                                                                borderTopColor: junoColors[currentJunoColorIndex]
+                                                                borderTopColor: junoColors[currentJunoColorIndex],
                                                             }}
                                                         ></div>
                                                         <span
-                                                            className={`transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 transform scale-100' : 'opacity-30 transform scale-95'}`}
+                                                            className={`transition-all duration-300 ease-in-out ${isVisible
+                                                                ? "opacity-100 transform scale-100"
+                                                                : "opacity-30 transform scale-95"
+                                                                }`}
                                                             style={{
                                                                 color: junoColors[currentJunoColorIndex],
-                                                                textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`
+                                                                textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`,
                                                             }}
                                                         >
                                                             Signing in...
@@ -475,10 +461,13 @@ export default function LoginPage() {
                                                     </div>
                                                 ) : (
                                                     <span
-                                                        className={`transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 transform scale-100' : 'opacity-30 transform scale-95'}`}
+                                                        className={`transition-all duration-300 ease-in-out ${isVisible
+                                                            ? "opacity-100 transform scale-100"
+                                                            : "opacity-30 transform scale-95"
+                                                            }`}
                                                         style={{
                                                             color: junoColors[currentJunoColorIndex],
-                                                            textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`
+                                                            textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`,
                                                         }}
                                                     >
                                                         Sign In
@@ -490,7 +479,9 @@ export default function LoginPage() {
                                 </FormProvider>
 
                                 <div className="mt-5 sm:mt-6 text-center">
-                                    <span className="text-white/70 text-sm sm:text-base">{t("login.forgotPassword")}</span>
+                                    <span className="text-white/70 text-sm sm:text-base">
+                                        {t("login.forgotPassword")}
+                                    </span>
                                     <a
                                         href="#"
                                         className="ml-2 text-white font-semibold hover:text-primary/80 transition-colors underline-offset-4 hover:underline text-sm sm:text-base"
@@ -511,49 +502,63 @@ export default function LoginPage() {
 
                                 <div className="mt-4 sm:mt-5 text-center text-white/70 text-xs sm:text-sm leading-relaxed px-2">
                                     {t("login.agreeTerms")}{" "}
-                                    <a href="#" className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline">{t("login.terms")}</a>
+                                    <a
+                                        href="#"
+                                        className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
+                                    >
+                                        {t("login.terms")}
+                                    </a>
                                     {" "}{t("login.and")}{" "}
-                                    <a href="#" className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline">{t("login.privacyPolicy")}</a>.
+                                    <a
+                                        href="#"
+                                        className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
+                                    >
+                                        {t("login.privacyPolicy")}
+                                    </a>
+                                    .
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Admin Login Layout */}
-                    <div className={`absolute inset-0 flex flex-col lg:flex-row transition-all duration-700 ease-in-out transform ${activeTab === 'admin' ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
+                    <div
+                        className={`absolute inset-0 flex ${isDesktop ? "flex-row" : "flex-col"
+                            } transition-all duration-700 ease-in-out transform ${activeTab === "admin"
+                                ? "translate-x-0 opacity-100"
+                                : isDesktop
+                                    ? "-translate-x-full opacity-0"
+                                    : "opacity-0"
+                            }`}
+                    >
                         {/* Left: Admin Login Form */}
-                        <div className="flex flex-col justify-center px-6 sm:px-8 py-8 sm:py-10 lg:py-12 lg:w-1/2 w-full bg-gradient-to-br from-gray-900 to-black">
+                        <div
+                            className={`flex flex-col justify-center px-6 sm:px-8 py-8 ${isDesktop ? "lg:py-12 lg:w-1/2" : "w-full"
+                                } bg-gradient-to-br from-gray-900 to-black`}
+                        >
                             <div className="max-w-sm mx-auto w-full">
                                 {/* Tab Navigation - Modern Toggle Buttons */}
                                 <div className="flex justify-center items-center mb-6">
                                     <div className="bg-white/20 p-1 rounded-full flex gap-1">
                                         <button
-                                            onClick={() => setActiveTab('client')}
-                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === 'client'
-                                                ? 'bg-white text-black shadow-md'
-                                                : 'text-white/70 hover:text-white'
+                                            onClick={() => setActiveTab("client")}
+                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === "client"
+                                                ? "bg-white text-black shadow-md"
+                                                : "text-white/70 hover:text-white"
                                                 }`}
                                         >
                                             Client
                                         </button>
-
                                         <button
-                                            onClick={() => setActiveTab('admin')}
-                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === 'admin'
-                                                ? 'bg-white text-black shadow-md'
-                                                : 'text-white/70 hover:text-white'
+                                            onClick={() => setActiveTab("admin")}
+                                            className={`px-4 py-2 rounded-full font-semibold cursor-pointer text-sm transition-all duration-300 ${activeTab === "admin"
+                                                ? "bg-white text-black shadow-md"
+                                                : "text-white/70 hover:text-white"
                                                 }`}
                                         >
                                             Admin
                                         </button>
                                     </div>
-                                </div>
-
-                                {/* Mobile logo - only visible on mobile */}
-                                <div className="lg:hidden mb-6 text-center">
-                                    <h2 className="text-lg sm:text-xl font-semibold text-white/90 mb-4">
-                                        {t("admin.loginTitle")}
-                                    </h2>
                                 </div>
 
                                 <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-white tracking-tight">
@@ -565,7 +570,10 @@ export default function LoginPage() {
 
                                 <FormProvider {...adminForm}>
                                     <form
-                                        onSubmit={adminForm.handleSubmit((data) => handleLogin(data, true), onAdminInvalid)}
+                                        onSubmit={adminForm.handleSubmit(
+                                            (data) => handleLogin(data, true),
+                                            onAdminInvalid
+                                        )}
                                         className="space-y-5 sm:space-y-6"
                                     >
                                         <FormItem>
@@ -618,10 +626,13 @@ export default function LoginPage() {
                                                     <div className="flex items-center justify-center space-x-3">
                                                         <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                                         <span
-                                                            className={`transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 transform scale-100' : 'opacity-30 transform scale-95'}`}
+                                                            className={`transition-all duration-300 ease-in-out ${isVisible
+                                                                ? "opacity-100 transform scale-100"
+                                                                : "opacity-30 transform scale-95"
+                                                                }`}
                                                             style={{
                                                                 color: junoColors[currentJunoColorIndex],
-                                                                textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`
+                                                                textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`,
                                                             }}
                                                         >
                                                             {t("admin.signingIn")}
@@ -629,10 +640,13 @@ export default function LoginPage() {
                                                     </div>
                                                 ) : (
                                                     <span
-                                                        className={`transition-all duration-300 ease-in-out ${isVisible ? 'opacity-100 transform scale-100' : 'opacity-30 transform scale-95'}`}
+                                                        className={`transition-all duration-300 ease-in-out ${isVisible
+                                                            ? "opacity-100 transform scale-100"
+                                                            : "opacity-30 transform scale-95"
+                                                            }`}
                                                         style={{
                                                             color: junoColors[currentJunoColorIndex],
-                                                            textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`
+                                                            textShadow: `0 0 10px ${junoColors[currentJunoColorIndex]}20`,
                                                         }}
                                                     >
                                                         {t("admin.signIn")}
@@ -644,7 +658,9 @@ export default function LoginPage() {
                                 </FormProvider>
 
                                 <div className="mt-5 sm:mt-6 text-center">
-                                    <span className="text-white/70 text-sm sm:text-base">Need admin access?</span>
+                                    <span className="text-white/70 text-sm sm:text-base">
+                                        Need admin access?
+                                    </span>
                                     <a
                                         href="#"
                                         className="ml-2 text-white font-semibold hover:text-orange-300 transition-colors underline-offset-4 hover:underline text-sm sm:text-base"
@@ -665,43 +681,44 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        {/* Right: Logo and branding for Admin */}
-                        <div className="hidden lg:flex bg-white flex-col items-center justify-center px-8 py-12 lg:w-1/2 w-full">
-                            <div className="mb-6">
-                                <Image
-                                    src="/resources/favicons/isologos.png"
-                                    alt="Juno logo"
-                                    width={200}
-                                    height={96}
-                                    className="drop-shadow-2xl w-56"
-                                    priority
-                                />
-                            </div>
-                            <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-5 text-center">
-                                {t("admin.portalTitle")}
-                            </h2>
-                            <p className="text-gray-700 text-center mb-6 text-base lg:text-lg leading-relaxed max-w-sm">
-                                {t("admin.portalDesc")}
-                            </p>
-
-                            <div className="flex items-center space-x-6 text-gray-600">
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                                    <span className="text-sm">{t("admin.control")}</span>
+                        {/* Right: Logo and branding for Admin - Only on desktop */}
+                        {isDesktop && (
+                            <div className="bg-white flex-col items-center justify-center px-8 py-12 lg:w-1/2 w-full hidden lg:flex">
+                                <div className="mb-6">
+                                    <Image
+                                        src="/resources/favicons/isologos.png"
+                                        alt="Juno logo"
+                                        width={200}
+                                        height={96}
+                                        className="drop-shadow-2xl w-56"
+                                        priority
+                                    />
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                                    <span className="text-sm">{t("admin.monitor")}</span>
+                                <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-5 text-center">
+                                    {t("admin.portalTitle")}
+                                </h2>
+                                <p className="text-gray-700 text-center mb-6 text-base lg:text-lg leading-relaxed max-w-sm">
+                                    {t("admin.portalDesc")}
+                                </p>
+                                <div className="flex items-center space-x-6 text-gray-600">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                        <span className="text-sm">{t("admin.control")}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                        <span className="text-sm">{t("admin.monitor")}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
+                                        <span className="text-sm">{t("admin.manage")}</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
-                                    <span className="text-sm">{t("admin.manage")}</span>
+                                <div className="mt-10 text-xs text-gray-500 text-center">
+                                    &copy; {new Date().getFullYear()} Juno Admin Portal. {t("admin.rights")}
                                 </div>
                             </div>
-                            <div className="mt-10 text-xs text-gray-500 text-center">
-                                &copy; {new Date().getFullYear()} Juno Admin Portal. {t("admin.rights")}
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </Card>

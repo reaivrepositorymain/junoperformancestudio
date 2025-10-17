@@ -67,7 +67,7 @@ export async function POST(request: Request) {
   const { error: updateError } = await supabase
     .from("users")
     .update({ profile_image: publicUrl })
-    .eq("email", userEmail);
+    .eq("comp_email", userEmail);
 
   if (updateError) {
     console.log("Failed to update user:", updateError);

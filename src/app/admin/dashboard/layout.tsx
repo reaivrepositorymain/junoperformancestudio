@@ -36,16 +36,6 @@ import {
     HardDrive
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-    Dialog,
-    DialogTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-} from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
@@ -53,16 +43,6 @@ const junoColors = [
     "#E84912", "#F6A100", "#D7770F", "#53B36A", "#438D34",
     "#67ACAA", "#64C2C6", "#3669B2", "#2953A1", "#719AD1"
 ];
-
-// Define sidebar navigation items for admin
-type AdminSidebarItem = {
-    name: string;
-    href: string;
-    icon: React.ComponentType<any>;
-    isSpecial?: boolean;
-    itemCount?: number;
-    category: 'main' | 'management' | 'analytics' | 'system';
-};
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -132,8 +112,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
     const handleLogout = async () => {
         try {
-            toast.success("Logged out successfully!");
-            router.push("/auth/admin/login");
+            const res = await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+            if (res.ok) {
+                toast.success("Logged out successfully!");
+                router.push("/auth/2.0/login");
+            } else {
+                toast.error("Logout failed.");
+            }
         } catch (error: any) {
             toast.error("Logout failed.");
         }
@@ -234,13 +222,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                             <UserCheck className="h-4 w-4" />
                                             <span>Add New Client</span>
                                         </button>
-                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
+                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
+                                            onClick={() => router.push("/admin/dashboard/client/listing")}
+                                        >
                                             <Shield className="h-4 w-4" />
-                                            <span>Security Audit</span>
+                                            <span>Clients List</span>
                                         </button>
-                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
+                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
+                                            onClick={() => router.push("/admin/dashboard")}
+                                        >
                                             <Database className="h-4 w-4" />
-                                            <span>Backup System</span>
+                                            <span>Dashboard</span>
                                         </button>
                                     </div>
                                 </div>
