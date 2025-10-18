@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import localFont from "next/font/local";
 import { LanguageProvider } from "@/context/LanguageProvider";
 import ConditionalLanguageSelector from "@/components/ConditionalLanguageSelector";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // Principal font - DM Sans
@@ -131,16 +132,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
 
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${distroBold.variable} ${ppEditorialNew.variable} font-dm-sans tracking-tight antialiased`}>
+      <body className={`${dmSans.variable} ${distroBold.variable} ${ppEditorialNew.variable} 
+      font-dm-sans tracking-tight antialiased`}>
         <LanguageProvider>
           <ConditionalLanguageSelector />
           <Suspense>
             {children}
           </Suspense>
+          <Analytics />
         </LanguageProvider>
       </body>
     </html>
