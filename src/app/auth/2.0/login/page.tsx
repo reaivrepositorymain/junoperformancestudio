@@ -484,16 +484,10 @@ export default function LoginPage() {
                                     </span>
                                     <a
                                         href="#"
-                                        className="ml-2 text-white font-semibold hover:text-primary/80 transition-colors underline-offset-4 hover:underline text-sm sm:text-base"
+                                        className="ml-2 text-white font-semibold hover:text-[#E84912] transition-colors underline-offset-4 hover:underline text-sm sm:text-base"
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            toast.info(t("login.resetComingSoon"), {
-                                                style: {
-                                                    background: "#67ACAA",
-                                                    color: "white",
-                                                    border: "1px solid #64C2C6",
-                                                },
-                                            });
+                                            router.push("/auth/2.0/reset-password");
                                         }}
                                     >
                                         {t("login.requestHere")}
@@ -504,14 +498,14 @@ export default function LoginPage() {
                                     {t("login.agreeTerms")}{" "}
                                     <a
                                         href="#"
-                                        className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
+                                        className="text-white hover:text-[#E84912] transition-colors underline-offset-4 hover:underline"
                                     >
                                         {t("login.terms")}
                                     </a>
                                     {" "}{t("login.and")}{" "}
                                     <a
                                         href="#"
-                                        className="text-white hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
+                                        className="text-white hover:text-[#E84912] transition-colors underline-offset-4 hover:underline"
                                     >
                                         {t("login.privacyPolicy")}
                                     </a>
@@ -620,7 +614,7 @@ export default function LoginPage() {
                                             <Button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="w-full bg-white hover:from-orange-600 hover:to-red-600 text-white font-bold text-lg sm:text-xl py-3 sm:py-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                                className="w-full bg-white hover:bg-white text-white font-bold text-lg sm:text-xl py-3 sm:py-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                             >
                                                 {loading ? (
                                                     <div className="flex items-center justify-center space-x-3">

@@ -136,7 +136,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${distroBold.variable} ${ppEditorialNew.variable} 
-      font-dm-sans tracking-tight antialiased`}>
+      font-dm-sans 
+      tracking-tight 
+      antialiased`}>
         <LanguageProvider>
           <ConditionalLanguageSelector />
           <Suspense>

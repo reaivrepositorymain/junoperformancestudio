@@ -62,7 +62,7 @@ export default function CredentialsPage() {
                 onClick={copyToClipboard}
                 className={`p-2 md:p-3 rounded-lg transition-all duration-200 font-semibold flex items-center gap-1 ${copied
                     ? "bg-green-500 text-white"
-                    : "bg-[#E84912] text-white hover:bg-[#d63d0e]"
+                    : "bg-black text-white hover:bg-[#E84912]"
                   }`}
               >
                 <Copy className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function CredentialsPage() {
           <Button
             onClick={handleContinue}
             disabled={loading}
-            className="flex-1 bg-[#E84912] hover:bg-[#d63d0e] text-white font-bold py-3 md:py-6 rounded-lg text-base transition-all duration-200 flex items-center justify-center gap-2"
+            className="flex-1 bg-black hover:bg-[#E84912] text-white font-bold py-3 md:py-6 rounded-lg text-base transition-all duration-200 flex items-center justify-center gap-2"
           >
             {loading ? "Loading..." : "Continue to Onboarding"}
             <ArrowRight className="w-4 h-4" />

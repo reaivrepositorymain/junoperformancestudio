@@ -12,7 +12,9 @@ export default function LanguageSelector() {
           key={l.code}
           onClick={() => setLanguage(l.code)}
           className={`px-2 py-1 rounded font-semibold text-sm flex items-center gap-1 transition-colors ${
-            language === l.code ? "bg-[#E84912] text-white" : "bg-white text-gray-700 hover:bg-gray-100"
+            language === l.code
+              ? "bg-black text-white"
+              : "bg-white text-gray-700 hover:bg-gray-400 hover:text-white"
           }`}
         >
           <span>{l.flag}</span>
