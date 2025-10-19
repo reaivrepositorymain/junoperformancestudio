@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageProvider";
 import { useMediaQuery } from "react-responsive";
-
-const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
+import { Eye, EyeOff } from "lucide-react";
 
 const junoColors = [
     "#E84912", // destructive-foreground
@@ -53,6 +52,8 @@ export default function LoginPage() {
     const isMobile = useMediaQuery({ maxWidth: 639 });
     const isTablet = useMediaQuery({ minWidth: 640, maxWidth: 1023 });
     const isDesktop = useMediaQuery({ minWidth: 1024 });
+    const [showClientPassword, setShowClientPassword] = useState(false);
+    const [showAdminPassword, setShowAdminPassword] = useState(false);
 
     // Setup separate forms for client and admin
     const clientForm = useForm<LoginFormData>({
@@ -401,7 +402,7 @@ export default function LoginPage() {
                                                     {...clientForm.register("email")}
                                                     disabled={loading}
                                                     autoComplete="email"
-                                                    placeholder="your@company.com"
+                                                    placeholder="companyname@juno.com"
                                                     className={`bg-white/10 border-2 ${clientForm.formState.errors.email
                                                         ? "border-red-400 focus:border-red-400"
                                                         : "border-white/20 focus:border-blue-400"
@@ -416,17 +417,31 @@ export default function LoginPage() {
                                                 {t("login.password")}
                                             </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    type="password"
-                                                    {...clientForm.register("password")}
-                                                    disabled={loading}
-                                                    autoComplete="current-password"
-                                                    placeholder="••••••••••"
-                                                    className={`bg-white/10 border-2 ${clientForm.formState.errors.password
-                                                        ? "border-red-400 focus:border-red-400"
-                                                        : "border-white/20 focus:border-blue-400"
-                                                        } focus:ring-2 focus:ring-blue-400/20 text-white placeholder:text-white/50 text-base sm:text-lg py-3 sm:py-6 rounded-xl transition-all duration-200`}
-                                                />
+                                                <div className="relative">
+                                                    <Input
+                                                        type={showClientPassword ? "text" : "password"}
+                                                        {...clientForm.register("password")}
+                                                        disabled={loading}
+                                                        autoComplete="current-password"
+                                                        placeholder="••••••••••"
+                                                        className={`bg-white/10 border-2 ${clientForm.formState.errors.password
+                                                            ? "border-red-400 focus:border-red-400"
+                                                            : "border-white/20 focus:border-blue-400"
+                                                            } focus:ring-2 focus:ring-blue-400/20 text-white placeholder:text-white/50 text-base sm:text-lg py-3 sm:py-6 rounded-xl transition-all duration-200`}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        tabIndex={-1}
+                                                        onClick={() => setShowClientPassword((prev) => !prev)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
+                                                    >
+                                                        {showClientPassword ? (
+                                                            <EyeOff className="w-5 h-5" />
+                                                        ) : (
+                                                            <Eye className="w-5 h-5" />
+                                                        )}
+                                                    </button>
+                                                </div>
                                             </FormControl>
                                             <FormMessage className="text-red-400 text-sm mt-1" />
                                         </FormItem>
@@ -595,17 +610,31 @@ export default function LoginPage() {
                                                 {t("admin.password")}
                                             </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    type="password"
-                                                    {...adminForm.register("password")}
-                                                    disabled={loading}
-                                                    autoComplete="current-password"
-                                                    placeholder="••••••••••"
-                                                    className={`bg-white/10 border-2 ${adminForm.formState.errors.password
-                                                        ? "border-red-400 focus:border-red-400"
-                                                        : "border-white/20 focus:border-orange-400"
-                                                        } focus:ring-2 focus:ring-orange-400/20 text-white placeholder:text-white/50 text-base sm:text-lg py-3 sm:py-6 rounded-xl transition-all duration-200`}
-                                                />
+                                                <div className="relative">
+                                                    <Input
+                                                        type={showAdminPassword ? "text" : "password"}
+                                                        {...adminForm.register("password")}
+                                                        disabled={loading}
+                                                        autoComplete="current-password"
+                                                        placeholder="••••••••••"
+                                                        className={`bg-white/10 border-2 ${adminForm.formState.errors.password
+                                                            ? "border-red-400 focus:border-red-400"
+                                                            : "border-white/20 focus:border-orange-400"
+                                                            } focus:ring-2 focus:ring-orange-400/20 text-white placeholder:text-white/50 text-base sm:text-lg py-3 sm:py-6 rounded-xl transition-all duration-200`}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        tabIndex={-1}
+                                                        onClick={() => setShowAdminPassword((prev) => !prev)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
+                                                    >
+                                                        {showAdminPassword ? (
+                                                            <EyeOff className="w-5 h-5" />
+                                                        ) : (
+                                                            <Eye className="w-5 h-5" />
+                                                        )}
+                                                    </button>
+                                                </div>
                                             </FormControl>
                                             <FormMessage className="text-red-400 text-sm mt-1" />
                                         </FormItem>

@@ -826,37 +826,38 @@ export default function DashboardClientPage() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Files Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {/* Files List */}
+        <div className="flex flex-col gap-4">
           {loading ? (
-            <div className="col-span-full flex items-center justify-center py-12 text-gray-500">
+            <div className="flex items-center justify-center py-12 text-gray-500">
               Loading...
             </div>
           ) : filteredFiles.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-16">
+            <div className="flex flex-col items-center justify-center py-16">
               <LiquidGlassCard
                 variant="primary"
                 size="default"
                 hover="glow"
                 showShineBorder={false}
                 glassEffect={true}
-                className="group relative w-full max-w-xl h-80 flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-3xl cursor-pointer hover:border-[#E84912] transition-all duration-300"
+                className="group relative w-full max-w-xl h-20 flex flex-row items-center justify-center border-2 border-dashed border-gray-400 rounded-2xl cursor-pointer hover:border-[#E84912] transition-all duration-300"
                 onClick={() => setShowAddDialog(true)}
                 title="Add New File or Folder"
               >
-                <div className="flex flex-col items-center justify-center h-full gap-4">
-                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#E84912]/10 transition-all duration-300">
-                    <svg className="w-12 h-12 text-gray-400 group-hover:text-[#E84912] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex flex-row items-center justify-center w-full gap-6 px-8">
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#E84912]/10 transition-all duration-300">
+                    <svg className="w-8 h-8 text-gray-400 group-hover:text-[#E84912] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <span className="font-medium text-gray-500 group-hover:text-[#E84912] transition-colors text-lg">
-                    Add New File or Folder
-                  </span>
-                  <span className="text-sm text-gray-400 text-center max-w-md">
-                    You don&apos;t have any files or folders yet.<br />
-                    Click here to upload or create your first asset!
-                  </span>
+                  <div className="flex flex-row flex-1 items-center justify-between">
+                    <span className="font-medium text-gray-500 group-hover:text-[#E84912] transition-colors text-base">
+                      Add New File or Folder
+                    </span>
+                    <span className="text-sm text-gray-400 ml-4">
+                      You don&apos;t have any files or folders yet. Click here to upload or create your first asset!
+                    </span>
+                  </div>
                 </div>
               </LiquidGlassCard>
             </div>
@@ -870,7 +871,7 @@ export default function DashboardClientPage() {
                       size="default"
                       hover="glow"
                       glassEffect={true}
-                      className={`group relative h-48 flex flex-col justify-between border border-gray-200 rounded-2xl cursor-pointer bg-gradient-to-br ${cardBgColors[index % cardBgColors.length]}`}
+                      className={`group relative h-20 flex flex-row items-center border border-gray-200 rounded-2xl cursor-pointer bg-gradient-to-r ${cardBgColors[index % cardBgColors.length]} px-6`}
                       onClick={() => {
                         if (asset.type === "folder") {
                           navigateToFolder([...currentPath, asset.name]);
@@ -879,43 +880,41 @@ export default function DashboardClientPage() {
                         }
                       }}
                     >
-                      {/* Background Illustration */}
-                      <div className="absolute inset-0 pointer-events-none opacity-10">
-                        <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-sky-200 to-sky-300 rounded-lg rotate-12" />
-                        <div className="absolute top-8 right-8 w-12 h-12 bg-gradient-to-br from-beige-200 to-beige-300 rounded-lg rotate-45" />
-                        <div className="absolute bottom-6 left-4 w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-md -rotate-12" />
-                      </div>
-                      {/* Card Header */}
-                      <div className="relative z-10 flex items-center justify-between mb-2">
-                        <div className="p-3 rounded-xl bg-white/80 border border-white/40 shadow-sm">
-                          {asset.type === "folder" ? <Folder className="w-6 h-6 text-sky-600" /> :
-                            asset.type === "image" ? <Image className="w-6 h-6 text-sky-600" /> :
-                              <FileText className="w-6 h-6 text-sky-600" />}
+                      {/* Info - All in one row */}
+                      <div className="flex flex-row flex-1 items-center justify-between">
+                        {/* Left: Icon and Name */}
+                        <div className="flex items-center min-w-0">
+                          <div className="flex-shrink-0 flex items-center justify-center rounded-xl bg-white/80 border border-white/40 shadow-sm mr-4 h-12 w-12">
+                            {asset.type === "folder" ? (
+                              <Folder className="w-7 h-7 text-sky-600" />
+                            ) : asset.type === "image" ? (
+                              <Image className="w-7 h-7 text-sky-600" />
+                            ) : (
+                              <FileText className="w-7 h-7 text-sky-600" />
+                            )}
+                          </div>
+                          <h3 className="font-semibold tracking-tighter text-gray-900 text-lg leading-tight truncate max-w-[180px]">
+                            {asset.name}
+                          </h3>
                         </div>
-                        <span className="px-2 py-1 rounded-full bg-white/60 border border-white/40 text-xs font-medium text-gray-600">
-                          {asset.type.charAt(0).toUpperCase() + asset.type.slice(1)}
-                        </span>
-                      </div>
-                      {/* Gradient Overlay for Text Readability */}
-                      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white/90 via-white/50 to-transparent rounded-b-2xl pointer-events-none" />
-                      {/* Card Content */}
-                      <div className="relative z-10 flex-1 flex flex-col justify-end">
-                        <h3 className="font-semibold text-gray-900 text-sm mb-1 leading-tight">
-                          {asset.name}
-                        </h3>
-                        <p className="text-xs text-gray-600 mb-2">
-                          {asset.type === "folder"
-                            ? `Contains ${asset.items ?? 0} items`
-                            : asset.type === "image"
-                              ? "High resolution image"
-                              : asset.mimetype || "Document"}
-                        </p>
-                        <div className="flex items-center justify-between">
+                        {/* Right: Metadata and Arrow */}
+                        <div className="flex flex-row items-center justify-end gap-2 ml-4">
+                          <span className="text-xs text-gray-600 truncate max-w-[120px]">
+                            {asset.type === "folder"
+                              ? `Contains ${asset.items ?? 0} items`
+                              : asset.type === "image"
+                                ? "High resolution image"
+                                : asset.mimetype || "Document"}
+                          </span>
                           <span className="text-xs text-gray-500 font-medium">
                             {asset.type === "folder" ? `${asset.items ?? 0} items` : asset.created_at?.slice(0, 10)}
                           </span>
-                          <button className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-sky-100 hover:bg-sky-200 transition-all duration-300">
-                            <svg className="w-3 h-3 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <span className="px-2 py-1 rounded-full bg-white/60 border border-white/40 text-xs font-medium text-gray-600">
+                            {asset.type.charAt(0).toUpperCase() + asset.type.slice(1)}
+                          </span>
+                          {/* Arrow Button */}
+                          <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg bg-sky-100 hover:bg-sky-200 transition-all duration-300">
+                            <svg className="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </button>
@@ -942,10 +941,17 @@ export default function DashboardClientPage() {
                     </ContextMenuItem>
                     <ContextMenuItem
                       onClick={() => {
+                        // Prevent deletion of protected folders
+                        const protectedFolders = ["Creatives", "Setup", "Reports"];
+                        if (asset.type === "folder" && protectedFolders.includes(asset.name)) {
+                          toast.error(`Folder "${asset.name}" cannot be deleted.`);
+                          return;
+                        }
                         setDeleteTarget(asset);
                         setShowDeleteDialog(true);
                       }}
                       variant="destructive"
+                      disabled={asset.type === "folder" && ["Creatives", "Setup", "Reports"].includes(asset.name)}
                     >
                       Delete
                     </ContextMenuItem>
@@ -963,17 +969,17 @@ export default function DashboardClientPage() {
                 hover="glow"
                 showShineBorder={false}
                 glassEffect={true}
-                className="group relative h-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-2xl cursor-pointer hover:border-[#E84912] transition-all duration-300"
+                className="group relative h-20 flex flex-row items-center border-2 border-dashed border-gray-400 rounded-2xl cursor-pointer hover:border-[#E84912] transition-all duration-300 px-6"
                 onClick={() => setShowAddDialog(true)}
                 title="Add New File or Folder"
               >
-                <div className="flex flex-col items-center justify-center h-full gap-2">
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#E84912]/10 transition-all duration-300">
-                    <svg className="w-7 h-7 text-gray-400 group-hover:text-[#E84912] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex flex-row items-center w-full gap-6">
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#E84912]/10 transition-all duration-300">
+                    <svg className="w-6 h-6 text-gray-400 group-hover:text-[#E84912] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <span className="font-medium text-gray-500 group-hover:text-[#E84912] transition-colors text-sm">
+                  <span className="font-medium text-gray-500 group-hover:text-[#E84912] transition-colors text-base">
                     Add New File or Folder
                   </span>
                 </div>

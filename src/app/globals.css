@@ -155,6 +155,10 @@ button {
   .font-cursive {
     font-family: var(--font-cursive), cursive;
   }
+
+  button {
+    cursor: pointer;
+  }
 }
 
 @keyframes fade-in-up {

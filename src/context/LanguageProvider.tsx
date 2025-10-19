@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 export const languages = [
-  { code: "en", name: "English", flag: "🇺🇸" },
-  { code: "es", name: "Español", flag: "🇪🇸" },
+  { code: "en", name: "English", flag: "🇺🇸", flagCode: "us" },
+  { code: "es", name: "Español", flag: "🇪🇸", flagCode: "es" },
 ];
 
 const translations: Record<string, Record<string, string>> = {

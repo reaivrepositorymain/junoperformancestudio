@@ -69,6 +69,7 @@ import {
     DialogFooter,
     DialogClose,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { DndContext, useDroppable } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { supabase } from "@/lib/supabase";
@@ -386,7 +387,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
                                 {/* Wonderful Hamburger Menu */}
                                 <div className="relative">
-                                    <button
+                                    <Button
                                         type="button"
                                         className={`p-2 rounded-lg text-gray-700 hover:text-black hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-[#E84912] transition-all duration-200 flex items-center justify-center ${menuOpen ? 'bg-[#E84912] text-white' : 'bg-slate-200'}`}
                                         onClick={() => setMenuOpen(!menuOpen)}
@@ -396,7 +397,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                             <div className={`w-5 h-0.5 bg-current transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}></div>
                                             <div className={`w-5 h-0.5 bg-current transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
                                         </div>
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 {/* Mobile menu button with animation */}

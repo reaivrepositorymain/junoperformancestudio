@@ -103,6 +103,38 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }, [pathname]);
 
     useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const res = await fetch("/api/auth/check", {
+                    method: "GET",
+                    credentials: "include",
+                    signal: controller.signal,
+                    cache: 'no-store'
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!res.ok) {
+                    toast.error("You must be logged in to access this page.");
+                    router.push("/auth/2.0/login");
+                }
+            } catch (error: any) {
+                if (error.name === 'AbortError') {
+                    toast.error("Authentication check timed out.");
+                } else {
+                    toast.error("Authentication check failed.");
+                }
+                router.push("/auth/2.0/login");
+            }
+        };
+
+        checkAuth();
+    }, [router]);
+
+    useEffect(() => {
         // Mock admin user data
         setUser({
             name: "Admin User",
