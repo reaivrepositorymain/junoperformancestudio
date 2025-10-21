@@ -67,17 +67,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
     const clientSidebar: { name: string; href: string; emoji: string }[] = [
         { name: "MUSH NATURALS", href: "/admin/clients/mush-naturals", emoji: "/resources/favicons/isologos.png" },
-        { name: "HERBALS & HEALTH", href: "/admin/clients/herbals-health", emoji: "/resources/favicons/isologos-17.png" },
-        { name: "VITAVIGNE", href: "/admin/clients/vitavigne", emoji: "/resources/favicons/isologos-19.png" },
-        { name: "LELELÊ INTIMATES", href: "/admin/clients/lelele-intimates", emoji: "/resources/favicons/isologos-18.png" },
-        { name: "THE GARDEN", href: "/admin/clients/the-garden", emoji: "/resources/favicons/isologos-17.png" },
-        { name: "ADOPTA MIU", href: "/admin/clients/adopta-miu", emoji: "/resources/favicons/isologos-15.png" },
-        { name: "GET YOUR GUIDE", href: "/admin/clients/get-your-guide", emoji: "/resources/favicons/isologos-19.png" },
-        { name: "GINGER", href: "/admin/clients/ginger", emoji: "/resources/favicons/isologos-20.png" },
-        { name: "LIBERTARIA STORE", href: "/admin/clients/libertaria-store", emoji: "/resources/favicons/isologos-15.png" },
+        { name: "HERBALS & HEALTH", href: "/admin/clients/herbals-health", emoji: "/resources/favicons/Isologos-17.png" },
+        { name: "VITAVIGNE", href: "/admin/clients/vitavigne", emoji: "/resources/favicons/Isologos-19.png" },
+        { name: "LELELÊ INTIMATES", href: "/admin/clients/lelele-intimates", emoji: "/resources/favicons/Isologos-18.png" },
+        { name: "THE GARDEN", href: "/admin/clients/the-garden", emoji: "/resources/favicons/Isologos-17.png" },
+        { name: "ADOPTA MIU", href: "/admin/clients/adopta-miu", emoji: "/resources/favicons/Isologos-15.png" },
+        { name: "GET YOUR GUIDE", href: "/admin/clients/get-your-guide", emoji: "/resources/favicons/Isologos-19.png" },
+        { name: "GINGER", href: "/admin/clients/ginger", emoji: "/resources/favicons/Isologos-20.png" },
+        { name: "LIBERTARIA STORE", href: "/admin/clients/libertaria-store", emoji: "/resources/favicons/Isologos-15.png" },
         { name: "FLORIST FOR FUN", href: "/admin/clients/florist-for-fun", emoji: "/resources/favicons/isologos.png" },
-        { name: "REHAUS", href: "/admin/clients/rehaus", emoji: "/resources/favicons/isologos-15.png" },
-        { name: "VIUTY", href: "/admin/clients/viuty", emoji: "/resources/favicons/isologos-18.png" },
+        { name: "REHAUS", href: "/admin/clients/rehaus", emoji: "/resources/favicons/Isologos-15.png" },
+        { name: "VIUTY", href: "/admin/clients/viuty", emoji: "/resources/favicons/Isologos-18.png" },
     ];
 
     useEffect(() => {
