@@ -38,55 +38,72 @@ import {
     Wifi,
     Monitor
 } from "lucide-react";
-import { LineChart, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart as RechartsPieChart, Cell } from "recharts";
-
-const COLORS = ['#E84912', '#F6A100', '#53B36A', '#3669B2', '#67ACAA', '#D7770F', '#438D34', '#64C2C6', '#2953A1', '#719AD1'];
-
-// Mock data for charts
-const userGrowthData = [
-    { month: 'Jan', users: 1200, active: 980 },
-    { month: 'Feb', users: 1350, active: 1100 },
-    { month: 'Mar', users: 1580, active: 1300 },
-    { month: 'Apr', users: 1720, active: 1450 },
-    { month: 'May', users: 1890, active: 1600 },
-    { month: 'Jun', users: 2100, active: 1800 },
-];
-
-const systemPerformanceData = [
-    { time: '00:00', cpu: 45, memory: 62, disk: 78 },
-    { time: '04:00', cpu: 52, memory: 58, disk: 79 },
-    { time: '08:00', cpu: 78, memory: 74, disk: 81 },
-    { time: '12:00', cpu: 85, memory: 82, disk: 83 },
-    { time: '16:00', cpu: 72, memory: 76, disk: 84 },
-    { time: '20:00', cpu: 65, memory: 68, disk: 85 },
-];
-
-const projectStatusData = [
-    { name: 'Active', value: 45, color: '#53B36A' },
-    { name: 'Pending', value: 23, color: '#F6A100' },
-    { name: 'Completed', value: 78, color: '#3669B2' },
-    { name: 'On Hold', value: 12, color: '#E84912' },
-];
-
-const recentActivities = [
-    { id: 1, type: 'user', action: 'New user registered', user: 'John Doe', time: '2 minutes ago', severity: 'info' },
-    { id: 2, type: 'security', action: 'Failed login attempt detected', user: 'admin@example.com', time: '5 minutes ago', severity: 'warning' },
-    { id: 3, type: 'system', action: 'Database backup completed', user: 'System', time: '15 minutes ago', severity: 'success' },
-    { id: 4, type: 'project', action: 'Project "Website Redesign" updated', user: 'Jane Smith', time: '1 hour ago', severity: 'info' },
-    { id: 5, type: 'user', action: 'User permissions modified', user: 'Mike Johnson', time: '2 hours ago', severity: 'warning' },
-];
-
-const topClients = [
-    { name: 'Acme Corp', projects: 15, revenue: '$125,000', growth: '+12%', avatar: '/client1.jpg' },
-    { name: 'TechStart Inc', projects: 8, revenue: '$89,000', growth: '+8%', avatar: '/client2.jpg' },
-    { name: 'Global Solutions', projects: 12, revenue: '$156,000', growth: '+15%', avatar: '/client3.jpg' },
-    { name: 'Digital Agency', projects: 6, revenue: '$67,000', growth: '+5%', avatar: '/client4.jpg' },
-];
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
     const [systemStatus, setSystemStatus] = useState('healthy');
     const [loading, setLoading] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const router = useRouter();
+
+    const campaigns = [
+        {
+            id: 1,
+            title: "Spring Launch Campaign",
+            description: "Kickoff for the new product line with email and social media.",
+            status: "Running",
+            statusColor: "green",
+            tags: ["Marketing", "Email", "Q3"],
+            stats: {
+                Delivered: 2156,
+                Opened: 1890,
+                Clicked: 1205,
+                Converted: 234,
+            },
+        },
+        {
+            id: 2,
+            title: "Summer Sale",
+            description: "Seasonal discount campaign for all customers.",
+            status: "Paused",
+            statusColor: "yellow",
+            tags: ["Sales", "Discount", "Summer"],
+            stats: {
+                Delivered: 3120,
+                Opened: 2500,
+                Clicked: 980,
+                Converted: 120,
+            },
+        },
+        {
+            id: 3,
+            title: "Product Feedback",
+            description: "Collecting user feedback for the latest release.",
+            status: "Completed",
+            statusColor: "blue",
+            tags: ["Product", "Survey", "Feedback"],
+            stats: {
+                Delivered: 1800,
+                Opened: 1600,
+                Clicked: 900,
+                Converted: 300,
+            },
+        },
+        {
+            id: 4,
+            title: "VIP Client Outreach",
+            description: "Personalized outreach to top-tier clients.",
+            status: "Running",
+            statusColor: "green",
+            tags: ["CRM", "VIP", "Personal"],
+            stats: {
+                Delivered: 400,
+                Opened: 350,
+                Clicked: 200,
+                Converted: 80,
+            },
+        },
+    ];
 
     useEffect(() => {
         // Simulate loading
@@ -110,13 +127,13 @@ export default function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-7xl mx-auto space-y-6">
+            <div className="px-20 mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
                         <p className="text-gray-600">
-                            Welcome back! Here's what's happening with your system today.
+                            Welcome back! Here's what's happening with your Campaigns today.
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -133,328 +150,110 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Total Users</CardTitle>
-                            <Users className="h-4 w-4 text-[#E84912]" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-gray-900">2,156</div>
-                            <div className="flex items-center text-xs text-green-600 mt-1">
-                                <TrendingUp className="h-3 w-3 mr-1" />
-                                +12.5% from last month
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Active Clients</CardTitle>
-                            <UserCheck className="h-4 w-4 text-[#F6A100]" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-gray-900">89</div>
-                            <div className="flex items-center text-xs text-green-600 mt-1">
-                                <TrendingUp className="h-3 w-3 mr-1" />
-                                +8.2% from last month
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Total Projects</CardTitle>
-                            <Package className="h-4 w-4 text-[#53B36A]" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-gray-900">234</div>
-                            <div className="flex items-center text-xs text-red-600 mt-1">
-                                <TrendingDown className="h-3 w-3 mr-1" />
-                                -2.1% from last month
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Documents</CardTitle>
-                            <FileText className="h-4 w-4 text-[#3669B2]" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-gray-900">1,205</div>
-                            <div className="flex items-center text-xs text-green-600 mt-1">
-                                <TrendingUp className="h-3 w-3 mr-1" />
-                                +15.3% from last month
-                            </div>
-                        </CardContent>
-                    </Card>
+                {/* Filter & Sorting Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+                    <div className="flex items-center gap-2">
+                        <select className="border rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E84912]">
+                            <option>Active</option>
+                            <option>Archived</option>
+                        </select>
+                        <select className="border rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E84912]">
+                            <option>Status: Running</option>
+                            <option>Status: Paused</option>
+                            <option>Status: Completed</option>
+                        </select>
+                        <select className="border rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E84912]">
+                            <option>Tag: All</option>
+                            <option>Tag: Marketing</option>
+                            <option>Tag: Sales</option>
+                            <option>Tag: Product</option>
+                        </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 text-sm">Sort by:</span>
+                        <select className="border rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E84912]">
+                            <option>Newest</option>
+                            <option>Oldest</option>
+                            <option>Status</option>
+                            <option>Title</option>
+                        </select>
+                        <button className="ml-2 px-3 py-2 rounded-lg bg-[#E84912] text-white hover:bg-[#d63d0e] transition">+ Add Card</button>
+                    </div>
                 </div>
 
-                {/* System Status */}
-                <Card className="bg-white border border-gray-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-gray-900 flex items-center gap-2">
-                            <Server className="h-5 w-5 text-[#E84912]" />
-                            System Status
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <Cpu className="h-5 w-5 text-blue-500" />
-                                    <span className="text-gray-700">CPU Usage</span>
+                {/* Modern Card List */}
+                <div className="flex flex-col gap-6">
+                    {campaigns.map((card) => (
+                        <div
+                            key={card.id}
+                            className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col gap-4 text-left cursor-pointer"
+                            onClick={() => router.push(`/admin/dashboard/campaign/${card.id}`)}
+                            tabIndex={0}
+                            role="button"
+                            onKeyDown={e => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    router.push(`/admin/dashboard/campaign/${card.id}`);
+                                }
+                            }}
+                        >
+                            {/* Title & Subtitle */}
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">{card.title}</h3>
+                                    <p className="text-sm text-gray-500 mt-1">{card.description}</p>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-gray-900 font-semibold">72%</div>
-                                    <Progress value={72} className="w-16 h-2 mt-1" />
-                                </div>
+                                {/* Status Badge */}
+                                <span
+                                    className={`px-3 py-1 rounded-full text-xs font-semibold border
+                                    ${card.statusColor === "green" && "bg-green-50 text-green-700 border-green-200"}
+                                    ${card.statusColor === "yellow" && "bg-yellow-50 text-yellow-700 border-yellow-200"}
+                                    ${card.statusColor === "blue" && "bg-blue-50 text-blue-700 border-blue-200"}
+                                `}
+                                >
+                                    {card.status}
+                                </span>
                             </div>
-
-                            <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <Monitor className="h-5 w-5 text-green-500" />
-                                    <span className="text-gray-700">Memory</span>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-gray-900 font-semibold">68%</div>
-                                    <Progress value={68} className="w-16 h-2 mt-1" />
-                                </div>
+                            {/* Tags */}
+                            <div className="flex gap-2 flex-wrap">
+                                {card.tags.map((tag, idx) => (
+                                    <span key={idx} className="px-2 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">{tag}</span>
+                                ))}
                             </div>
-
-                            <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <HardDrive className="h-5 w-5 text-yellow-500" />
-                                    <span className="text-gray-700">Disk Space</span>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-gray-900 font-semibold">85%</div>
-                                    <Progress value={85} className="w-16 h-2 mt-1" />
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <Wifi className="h-5 w-5 text-purple-500" />
-                                    <span className="text-gray-700">Network</span>
-                                </div>
-                                <div className="text-right">
-                                    <Badge variant="outline" className="text-green-600 border-green-600 bg-green-50">
-                                        Healthy
-                                    </Badge>
+                            {/* Statistics Row */}
+                            <div className="flex items-center gap-8 mt-2">
+                                {Object.entries(card.stats).map(([label, value]) => (
+                                    <div key={label} className="flex flex-col items-center">
+                                        <span className="text-gray-500 text-xs">{label}</span>
+                                        <span className="font-bold text-gray-900">{value}</span>
+                                    </div>
+                                ))}
+                                {/* Actions */}
+                                <div className="ml-auto flex items-center gap-2">
+                                    <button
+                                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
+                                        title="Edit"
+                                        onClick={e => { e.stopPropagation(); /* handle edit */ }}
+                                    >
+                                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <path d="M15.232 5.232l3.536 3.536M9 13l6.232-6.232a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
+                                        title="More"
+                                        onClick={e => { e.stopPropagation(); /* handle more */ }}
+                                    >
+                                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <circle cx="12" cy="6" r="1" />
+                                            <circle cx="12" cy="12" r="1" />
+                                            <circle cx="12" cy="18" r="1" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
-
-                {/* Charts and Analytics */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* User Growth Chart */}
-                    <Card className="bg-white border border-gray-200 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
-                                <BarChart3 className="h-5 w-5 text-[#E84912]" />
-                                User Growth
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <AreaChart data={userGrowthData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                                    <XAxis dataKey="month" stroke="#6B7280" />
-                                    <YAxis stroke="#6B7280" />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'white',
-                                            border: '1px solid #E5E7EB',
-                                            borderRadius: '8px',
-                                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                        }}
-                                    />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="users"
-                                        stackId="1"
-                                        stroke="#E84912"
-                                        fill="#E84912"
-                                        fillOpacity={0.3}
-                                    />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="active"
-                                        stackId="2"
-                                        stroke="#53B36A"
-                                        fill="#53B36A"
-                                        fillOpacity={0.3}
-                                    />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-
-                    {/* Project Status Distribution */}
-                    <Card className="bg-white border border-gray-200 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
-                                <PieChart className="h-5 w-5 text-[#F6A100]" />
-                                Project Status
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <RechartsPieChart>
-                                    <Pie
-                                        data={projectStatusData}
-                                        cx="50%"
-                                        cy="50%"
-                                        labelLine={false}
-                                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                        dataKey="value"
-                                    >
-                                        {projectStatusData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'white',
-                                            border: '1px solid #E5E7EB',
-                                            borderRadius: '8px',
-                                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                        }}
-                                    />
-                                </RechartsPieChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
+                    ))}
                 </div>
-
-                {/* Recent Activity and Top Clients */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Recent Activity */}
-                    <Card className="bg-white border border-gray-200 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
-                                <Activity className="h-5 w-5 text-[#67ACAA]" />
-                                Recent Activity
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {recentActivities.map((activity) => (
-                                    <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                        <div className={`w-2 h-2 rounded-full mt-2 ${activity.severity === 'success' ? 'bg-green-500' :
-                                                activity.severity === 'warning' ? 'bg-yellow-500' :
-                                                    'bg-blue-500'
-                                            }`}></div>
-                                        <div className="flex-1">
-                                            <p className="text-gray-900 text-sm font-medium">{activity.action}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className="text-gray-500 text-xs">{activity.user}</span>
-                                                <span className="text-gray-400 text-xs">•</span>
-                                                <span className="text-gray-500 text-xs">{activity.time}</span>
-                                            </div>
-                                        </div>
-                                        <Badge
-                                            variant="outline"
-                                            className={`text-xs ${activity.severity === 'success' ? 'text-green-600 border-green-600 bg-green-50' :
-                                                    activity.severity === 'warning' ? 'text-yellow-600 border-yellow-600 bg-yellow-50' :
-                                                        'text-blue-600 border-blue-600 bg-blue-50'
-                                                }`}
-                                        >
-                                            {activity.type}
-                                        </Badge>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Top Clients */}
-                    <Card className="bg-white border border-gray-200 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
-                                <UserCheck className="h-5 w-5 text-[#3669B2]" />
-                                Top Clients
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {topClients.map((client, index) => (
-                                    <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                        <Avatar className="h-10 w-10">
-                                            <AvatarImage src={client.avatar} alt={client.name} />
-                                            <AvatarFallback className="bg-[#E84912] text-white">
-                                                {client.name.split(' ').map(n => n[0]).join('')}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <p className="text-gray-900 font-medium">{client.name}</p>
-                                            <p className="text-gray-500 text-sm">{client.projects} projects</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-gray-900 font-semibold">{client.revenue}</p>
-                                            <p className="text-green-600 text-sm">{client.growth}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* System Performance Chart */}
-                <Card className="bg-white border border-gray-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-gray-900 flex items-center gap-2">
-                            <Activity className="h-5 w-5 text-[#719AD1]" />
-                            System Performance (24h)
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={systemPerformanceData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                                <XAxis dataKey="time" stroke="#6B7280" />
-                                <YAxis stroke="#6B7280" />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'white',
-                                        border: '1px solid #E5E7EB',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="cpu"
-                                    stroke="#E84912"
-                                    strokeWidth={2}
-                                    name="CPU %"
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="memory"
-                                    stroke="#53B36A"
-                                    strokeWidth={2}
-                                    name="Memory %"
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="disk"
-                                    stroke="#3669B2"
-                                    strokeWidth={2}
-                                    name="Disk %"
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
             </div>
         </div>
     );

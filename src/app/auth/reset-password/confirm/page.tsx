@@ -43,6 +43,7 @@ export default function ResetPasswordConfirmPage() {
     }
 
     setLoading(true);
+    toast.message("Processing your password reset...", { icon: <Lock className="w-5 h-5" /> });
     const res = await fetch("/api/auth/reset-password/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -57,6 +58,7 @@ export default function ResetPasswordConfirmPage() {
     } else {
       const data = await res.json();
       setError(data.error || "Failed to reset password. The link may have expired.");
+      toast.error(data.error || "Failed to reset password.");
     }
   };
 

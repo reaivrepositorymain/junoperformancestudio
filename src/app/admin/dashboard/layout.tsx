@@ -19,20 +19,27 @@ import {
     Shield,
     Database,
     Activity,
+    Flag,
+    Users2Icon,
     Mail,
     Calendar,
+    Radio,
     CreditCard,
     Package,
     UserCheck,
     AlertTriangle,
     Zap,
+    ScreenShare,
     Globe,
     Lock,
     Eye,
     Clipboard,
     PieChart,
     TrendingUp,
+    HandCoins,
+    BriefcaseBusiness,
     Server,
+    File,
     HardDrive
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -59,18 +66,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const router = useRouter();
 
     const clientSidebar: { name: string; href: string; emoji: string }[] = [
-        { name: "MUSH NATURALS", href: "/admin/clients/mush-naturals", emoji: "🍄" },
-        { name: "HERBALS & HEALTH", href: "/admin/clients/herbals-health", emoji: "🌿" },
-        { name: "VITAVIGNE", href: "/admin/clients/vitavigne", emoji: "🍇" },
-        { name: "LELELÊ INTIMATES", href: "/admin/clients/lelele-intimates", emoji: "👙" },
-        { name: "THE GARDEN", href: "/admin/clients/the-garden", emoji: "🪴" },
-        { name: "ADOPTA MIU", href: "/admin/clients/adopta-miu", emoji: "🐱" },
-        { name: "GET YOUR GUIDE", href: "/admin/clients/get-your-guide", emoji: "🧭" },
-        { name: "GINGER", href: "/admin/clients/ginger", emoji: "💍" },
-        { name: "LIBERTARIA STORE", href: "/admin/clients/libertaria-store", emoji: "⚗️" },
-        { name: "FLORIST FOR FUN", href: "/admin/clients/florist-for-fun", emoji: "💐" },
-        { name: "REHAUS", href: "/admin/clients/rehaus", emoji: "🏠" },
-        { name: "VIUTY", href: "/admin/clients/viuty", emoji: "🧴" },
+        { name: "MUSH NATURALS", href: "/admin/clients/mush-naturals", emoji: "/resources/favicons/isologos.png" },
+        { name: "HERBALS & HEALTH", href: "/admin/clients/herbals-health", emoji: "/resources/favicons/isologos-17.png" },
+        { name: "VITAVIGNE", href: "/admin/clients/vitavigne", emoji: "/resources/favicons/isologos-19.png" },
+        { name: "LELELÊ INTIMATES", href: "/admin/clients/lelele-intimates", emoji: "/resources/favicons/isologos-18.png" },
+        { name: "THE GARDEN", href: "/admin/clients/the-garden", emoji: "/resources/favicons/isologos-17.png" },
+        { name: "ADOPTA MIU", href: "/admin/clients/adopta-miu", emoji: "/resources/favicons/isologos-15.png" },
+        { name: "GET YOUR GUIDE", href: "/admin/clients/get-your-guide", emoji: "/resources/favicons/isologos-19.png" },
+        { name: "GINGER", href: "/admin/clients/ginger", emoji: "/resources/favicons/isologos-20.png" },
+        { name: "LIBERTARIA STORE", href: "/admin/clients/libertaria-store", emoji: "/resources/favicons/isologos-15.png" },
+        { name: "FLORIST FOR FUN", href: "/admin/clients/florist-for-fun", emoji: "/resources/favicons/isologos.png" },
+        { name: "REHAUS", href: "/admin/clients/rehaus", emoji: "/resources/favicons/isologos-15.png" },
+        { name: "VIUTY", href: "/admin/clients/viuty", emoji: "/resources/favicons/isologos-18.png" },
     ];
 
     useEffect(() => {
@@ -189,12 +196,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
                             {/* Right side - Enhanced profile and actions */}
                             <div className="flex items-center space-x-3">
-                                {/* System Status Indicator */}
-                                <div className="flex items-center space-x-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-gray-600 text-xs font-medium">System Healthy</span>
-                                </div>
-
                                 {/* Notifications with badge */}
                                 <div className="relative">
                                     <button
@@ -257,33 +258,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
                                             onClick={() => router.push("/admin/dashboard/client/listing")}
                                         >
-                                            <Shield className="h-4 w-4" />
+                                            <Users2Icon className="h-4 w-4" />
                                             <span>Clients List</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
                                             onClick={() => router.push("/admin/dashboard")}
                                         >
-                                            <Database className="h-4 w-4" />
+                                            <ScreenShare className="h-4 w-4" />
                                             <span>Dashboard</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* System Monitoring */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">System</h3>
-                                    <div className="space-y-2">
-                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Activity className="h-4 w-4" />
-                                            <span>System Health</span>
-                                        </button>
-                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Server className="h-4 w-4" />
-                                            <span>Server Logs</span>
-                                        </button>
-                                        <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Eye className="h-4 w-4" />
-                                            <span>Monitoring</span>
                                         </button>
                                     </div>
                                 </div>
@@ -293,12 +275,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                     <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Reports</h3>
                                     <div className="space-y-2">
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <BarChart3 className="h-4 w-4" />
-                                            <span>Usage Analytics</span>
+                                            <HandCoins className="h-4 w-4" />
+                                            <span>Invoices</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <TrendingUp className="h-4 w-4" />
-                                            <span>Performance</span>
+                                            <BriefcaseBusiness className="h-4 w-4" />
+                                            <span>Proposals</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
                                             <Clipboard className="h-4 w-4" />
@@ -309,19 +291,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
                                 {/* Settings */}
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Settings</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Campaigns</h3>
                                     <div className="space-y-2">
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Settings className="h-4 w-4" />
-                                            <span>System Config</span>
+                                            <Flag className="h-4 w-4" />
+                                            <span>Active Campaigns</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Lock className="h-4 w-4" />
-                                            <span>Permissions</span>
+                                            <TrendingUp className="h-4 w-4" />
+                                            <span>Broadcasts</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left">
-                                            <Globe className="h-4 w-4" />
-                                            <span>Global Settings</span>
+                                            <File className="h-4 w-4" />
+                                            <span>Deliveries & Drafts</span>
                                         </button>
                                     </div>
                                 </div>
@@ -351,7 +333,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                             </div>
                                         )}
                                         <div
-                                            className={`pr-1 ${sidebarHovered
+                                            className={`${sidebarHovered
                                                 ? 'max-h-[650px]'
                                                 : 'max-h-[650px] overflow-hidden'
                                                 }`}
@@ -372,7 +354,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                                         }}
                                                         title={client.name}
                                                     >
-                                                        <span className="mr-2 pl-1 text-lg">{client.emoji}</span>
+                                                        <span className="mr-2 pl-1 text-lg flex items-center">
+                                                            <img src={client.emoji} alt={client.name} className="w-6 h-6 rounded-full object-contain" />
+                                                        </span>
                                                         <span className={`flex-1 min-w-0 truncate transition-all duration-300 ${sidebarHovered
                                                             ? (isActive ? 'text-white font-semibold' : 'text-gray-600 group-hover/item:text-gray-900 opacity-100')
                                                             : 'opacity-0 w-0'
