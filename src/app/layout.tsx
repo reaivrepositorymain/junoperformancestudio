@@ -120,10 +120,36 @@ const ppEditorialNew = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Portal | Juno Performance Studio",
-  description: "Secure access to proposal management system",
+  title: "Juno Performance Studio | Portal Access",
+  description: "Welcome to the Juno Performance Studio portal. Secure access for clients and admins to manage proposals, campaigns, meetings, and performance analytics for fashion, beauty, wellness, and tourism eCommerce brands.",
   icons: {
     icon: "/resources/favicons/favicon.ico",
+  },
+  openGraph: {
+    title: "Juno Performance Studio | Portal Access",
+    description: "Boutique Studio for eCommerce brands. Secure portal for proposals, campaigns, and analytics.",
+    url: "https://staging.portal.junoperformancestudio.com",
+    type: "website",
+    images: [
+      {
+        url: "/resources/favicons/isologos.png",
+        width: 512,
+        height: 512,
+        alt: "Juno Performance Studio Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Juno Performance Studio | Portal Access",
+    description: "Boutique Studio for eCommerce brands. Secure portal for proposals, campaigns, and analytics.",
+    images: [
+      "/resources/favicons/isologos.png",
+    ],
+  },
+  robots: {
+    index: false,
+    follow: false,
   },
 };
 
