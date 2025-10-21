@@ -118,6 +118,20 @@ export default function LoginPage() {
             if (res.ok) {
                 const result = await res.json();
 
+                // Prevent admin from logging in via client form
+                if (!isAdmin && result.user?.role === "admin") {
+                    toast.error("You cannot log in as admin from the client portal.", {
+                        style: {
+                            background: "#EA6D51",
+                            color: "white",
+                            border: "1px solid #E84912",
+                        },
+                        duration: 4000,
+                    });
+                    setLoading(false);
+                    return;
+                }
+
                 // Only allow admin role for admin login
                 if (isAdmin && result.user?.role !== "admin") {
                     toast.error("You do not have admin access.", {
@@ -153,7 +167,7 @@ export default function LoginPage() {
                             method: "GET",
                             headers: {
                                 "Content-Type": "application/json",
-                                Authorization: `Bearer ${result.token}`, // Pass the token for authentication
+                                Authorization: `Bearer ${result.token}`,
                             },
                         });
 

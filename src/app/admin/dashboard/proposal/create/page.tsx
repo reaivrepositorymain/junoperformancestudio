@@ -77,7 +77,7 @@ export default function CreateProposalPage() {
 
             if (!res.ok) {
                 toast.error("You must be logged in to access this page.");
-                router.push("/auth/2.0/proposal/login");
+                router.push("/auth/2.0/login");
             }
         };
 

@@ -231,7 +231,7 @@ export default function EditProposalPage() {
 
             if (!res.ok) {
                 toast.error("You must be logged in to access this page.");
-                router.push("/auth/2.0/proposal/login");
+                router.push("/auth/2.0/login");
             }
         };
 
@@ -443,7 +443,7 @@ export default function EditProposalPage() {
             finalTitle = originalTitle;
         } else {
             // Title was changed, format the new title
-            finalTitle = `Reaiv × ${data.client_name || "{client_name}"} | ${currentFormTitle || "{proposal_title}"}`;
+            finalTitle = `Reaiv x ${data.client_name || "{client_name}"} | ${currentFormTitle || "{proposal_title}"}`;
         }
 
         const updatedFields = { ...data, title: finalTitle };
@@ -464,7 +464,7 @@ export default function EditProposalPage() {
 
             if (res.ok) {
                 toast.success("Proposal updated successfully!");
-                router.push("/dashboard/proposal/listing");
+                router.push("/admin/dashboard/proposal/listing");
             } else {
                 const errorData = await res.json();
                 toast.error(errorData.error || "Failed to update proposal.");

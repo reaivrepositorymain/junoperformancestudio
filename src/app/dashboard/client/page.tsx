@@ -956,7 +956,34 @@ export default function DashboardClientPage() {
                       Delete
                     </ContextMenuItem>
                     <ContextMenuSeparator />
-                    <ContextMenuItem onClick={() => {/* handle download logic */ }}>
+                    <ContextMenuItem
+                      onClick={async () => {
+                        if (asset.storage_path) {
+                          try {
+                            const url = getPublicUrl(asset.storage_path);
+                            // Try to fetch the file as a blob for more reliable download
+                            const response = await fetch(url);
+                            if (!response.ok) throw new Error("Network response was not ok");
+                            const blob = await response.blob();
+                            const blobUrl = window.URL.createObjectURL(blob);
+
+                            const link = document.createElement("a");
+                            link.href = blobUrl;
+                            link.download = asset.name;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            // Clean up the blob URL
+                            setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+                          } catch (err) {
+                            toast.error("Failed to download file.");
+                          }
+                        } else {
+                          toast.error("File not available for download.");
+                        }
+                      }}
+                    >
                       Download
                     </ContextMenuItem>
                   </ContextMenuContent>

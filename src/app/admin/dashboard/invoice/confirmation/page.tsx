@@ -49,11 +49,11 @@ export default function InvoiceConfirmationPage() {
     };
 
     const handleBackToDashboard = () => {
-        router.push("/dashboard/listing");
+        router.push("/admin/dashboard/listing");
     };
 
     const handleCreateAnother = () => {
-        router.push("/dashboard/invoice/create");
+        router.push("/admin/dashboard/invoice/create");
     };
 
     const handleViewInvoice = async () => {
@@ -96,7 +96,7 @@ export default function InvoiceConfirmationPage() {
                         No OTP code found. Please create an invoice first.
                     </p>
                     <Button
-                        onClick={() => router.push("/dashboard/invoice/create")}
+                        onClick={() => router.push("/admin/dashboard/invoice/create")}
                         className="bg-[#8CE232] text-black font-bold hover:bg-[#8CE232]/90"
                     >
                         Create Invoice

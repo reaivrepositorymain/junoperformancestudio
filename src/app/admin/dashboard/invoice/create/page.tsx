@@ -455,9 +455,9 @@ export default function CreateInvoicePage() {
                 toast.success("Invoice created successfully!");
                 form.reset();
                 if (otpCode) {
-                    router.push(`/dashboard/invoice/confirmation?otp=${otpCode}`);
+                    router.push(`/admin/dashboard/invoice/confirmation?otp=${otpCode}`);
                 } else {
-                    router.push("/dashboard/listing");
+                    router.push("/admin/dashboard/listing");
                 }
             } else {
                 const errorData = await res.json();

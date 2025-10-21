@@ -49,11 +49,11 @@ export default function ProposalConfirmationPage() {
     };
 
     const handleBackToDashboard = () => {
-        router.push("/dashboard/listing");
+        router.push("/admin/dashboard/listing");
     };
 
     const handleCreateAnother = () => {
-        router.push("/dashboard/proposal/create");
+        router.push("/admin/dashboard/proposal/create");
     };
 
     const handleViewProposal = async () => {
