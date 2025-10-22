@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Lock, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "@/context/LanguageProvider";
 
 export default function ActivatePage() {
     const router = useRouter();
@@ -21,6 +22,8 @@ export default function ActivatePage() {
     const [confirm, setConfirm] = useState("");
     const [success, setSuccess] = useState(false);
 
+    const { t } = useLanguage();
+
     // Validate token on mount
     useEffect(() => {
         async function validateToken() {
@@ -28,7 +31,7 @@ export default function ActivatePage() {
             setError("");
             setValid(false);
             if (!token) {
-                setError("Invalid or missing activation token.");
+                setError(t("activate.invalidToken") || "Invalid or missing activation token.");
                 setLoading(false);
                 return;
             }
@@ -41,11 +44,12 @@ export default function ActivatePage() {
             if (res.ok && data.valid) {
                 setValid(true);
             } else {
-                setError(data.error || "Invalid or expired activation link.");
+                setError(data.error || t("activate.invalidOrExpired") || "Invalid or expired activation link.");
             }
             setLoading(false);
         }
         validateToken();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     // Handle password submit
@@ -53,11 +57,11 @@ export default function ActivatePage() {
         e.preventDefault();
         setError("");
         if (password.length < 6) {
-            setError("Password must be at least 6 characters.");
+            setError(t("activate.passwordMin") || "Password must be at least 6 characters.");
             return;
         }
         if (password !== confirm) {
-            setError("Passwords do not match.");
+            setError(t("activate.passwordsNoMatch") || "Passwords do not match.");
             return;
         }
         setLoading(true);
@@ -65,18 +69,18 @@ export default function ActivatePage() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token, password }),
-            credentials: "include", // Important: include cookies
+            credentials: "include",
         });
         const data = await res.json();
         setLoading(false);
         if (res.ok) {
             setSuccess(true);
-            toast.success("Password set! Redirecting...");
+            toast.success(t("activate.passwordSet") || "Password set! Redirecting...");
             setTimeout(() => {
                 router.push(`/auth/activate/credentials?email=${encodeURIComponent(data.email)}`);
             }, 1500);
         } else {
-            setError(data.error || "Activation failed.");
+            setError(data.error || t("activate.failed") || "Activation failed.");
         }
     };
 
@@ -86,10 +90,10 @@ export default function ActivatePage() {
                 {/* Header Section */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                        Activate Your Account
+                        {t("activate.title") || "Activate Your Account"}
                     </h1>
                     <p className="text-gray-600 text-lg">
-                        Set a secure password to get started with Juno
+                        {t("activate.subtitle") || "Set a secure password to get started with Juno"}
                     </p>
                 </div>
 
@@ -101,20 +105,20 @@ export default function ActivatePage() {
                                 <Lock className="w-8 h-8 text-[#E84912]" />
                             </div>
                         </div>
-                        <p className="text-gray-600 text-lg">Validating your activation link...</p>
+                        <p className="text-gray-600 text-lg">{t("activate.validating") || "Validating your activation link..."}</p>
                     </div>
                 ) : error && !valid ? (
                     <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
                         <div className="flex items-center gap-4">
                             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
                             <div>
-                                <h2 className="text-xl font-bold text-red-600 mb-2">Activation Failed</h2>
+                                <h2 className="text-xl font-bold text-red-600 mb-2">{t("activate.failedTitle") || "Activation Failed"}</h2>
                                 <p className="text-gray-700">{error}</p>
                                 <button
                                     onClick={() => router.push("/auth/2.0/login")}
                                     className="mt-4 inline-block px-6 py-2 bg-[#E84912] hover:bg-[#d63d0e] text-white font-bold rounded-lg transition"
                                 >
-                                    Back to Login
+                                    {t("activate.backToLogin") || "Back to Login"}
                                 </button>
                             </div>
                         </div>
@@ -125,10 +129,10 @@ export default function ActivatePage() {
                             <CheckCircle2 className="w-8 h-8 text-green-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-green-600 mb-2">
-                            Account Activated!
+                            {t("activate.activated") || "Account Activated!"}
                         </h2>
                         <p className="text-gray-600 mb-6">
-                            Your password has been set successfully. Redirecting to login...
+                            {t("activate.successDesc") || "Your password has been set successfully. Redirecting to login..."}
                         </p>
                         <div className="w-full bg-gray-200 rounded-full h-1">
                             <div className="bg-green-600 h-1 rounded-full animate-pulse" style={{ width: "100%" }}></div>
@@ -138,19 +142,19 @@ export default function ActivatePage() {
                     <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
                         {/* Instructions */}
                         <div className="mb-8 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                            <h3 className="font-semibold text-blue-900 mb-2">Password Requirements:</h3>
+                            <h3 className="font-semibold text-blue-900 mb-2">{t("activate.requirementsTitle") || "Password Requirements:"}</h3>
                             <ul className="text-sm text-blue-800 space-y-1">
                                 <li className="flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
-                                    At least 6 characters long
+                                    {t("activate.requirement1") || "At least 6 characters long"}
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
-                                    Must match in both fields
+                                    {t("activate.requirement2") || "Must match in both fields"}
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
-                                    Use a mix of uppercase, lowercase, and numbers for better security
+                                    {t("activate.requirement3") || "Use a mix of uppercase, lowercase, and numbers for better security"}
                                 </li>
                             </ul>
                         </div>
@@ -167,14 +171,14 @@ export default function ActivatePage() {
                             {/* Password Field */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    New Password
+                                    {t("activate.newPassword") || "New Password"}
                                 </label>
                                 <div className="relative">
                                     <Input
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        placeholder="Enter a secure password"
+                                        placeholder={t("activate.passwordPlaceholder") || "Enter a secure password"}
                                         required
                                         minLength={6}
                                         className="w-full pr-12 py-6"
@@ -196,14 +200,14 @@ export default function ActivatePage() {
                             {/* Confirm Password Field */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Confirm Password
+                                    {t("activate.confirmPassword") || "Confirm Password"}
                                 </label>
                                 <div className="relative">
                                     <Input
                                         type={showConfirm ? "text" : "password"}
                                         value={confirm}
                                         onChange={e => setConfirm(e.target.value)}
-                                        placeholder="Confirm your password"
+                                        placeholder={t("activate.confirmPasswordPlaceholder") || "Confirm your password"}
                                         required
                                         minLength={6}
                                         className="w-full pr-12 py-6"
@@ -225,7 +229,7 @@ export default function ActivatePage() {
                             {/* Password Strength Indicator */}
                             {password && (
                                 <div className="space-y-2">
-                                    <div className="text-xs font-medium text-gray-600">Password Strength:</div>
+                                    <div className="text-xs font-medium text-gray-600">{t("activate.strength") || "Password Strength:"}</div>
                                     <div className="flex gap-1">
                                         <div className={`h-1 flex-1 rounded-full ${password.length >= 6 ? "bg-green-500" : "bg-gray-200"}`}></div>
                                         <div className={`h-1 flex-1 rounded-full ${password.length >= 8 ? "bg-green-500" : "bg-gray-200"}`}></div>
@@ -241,12 +245,12 @@ export default function ActivatePage() {
                                 disabled={loading}
                             >
                                 <Lock className="w-5 h-5" />
-                                {loading ? "Activating..." : "Set Password & Activate"}
+                                {loading ? t("activate.activating") || "Activating..." : t("activate.setPassword") || "Set Password & Activate"}
                             </Button>
 
                             {/* Footer Text */}
                             <p className="text-center text-sm text-gray-500">
-                                By activating your account, you agree to our Terms of Service and Privacy Policy
+                                {t("activate.agree") || "By activating your account, you agree to our Terms of Service and Privacy Policy"}
                             </p>
                         </form>
                     </div>

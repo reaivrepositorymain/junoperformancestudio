@@ -2,29 +2,12 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { CloudUpload, FolderOpen, FileText, Sparkles } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { CloudUpload } from "lucide-react";
 import { toast } from "sonner";
 import { Tree, Folder, File, type TreeViewElement } from "@/components/ui/file-tree";
 import Loader from "@/components/kokonutui/loader";
-
-type LocalFile = {
-    id: string;
-    name: string;
-    file: File;
-    parentId: string | null;
-    type: "file";
-    path: string; // relative path from root
-};
-
-type LocalFolder = {
-    id: string;
-    name: string;
-    parentId: string | null;
-    type: "folder";
-    children: (LocalFile | LocalFolder)[];
-    path: string; // relative path from root
-};
+import { useLanguage } from "@/context/LanguageProvider";
+import type { LocalFile, LocalFolder } from "@/types/local-assets";
 
 function getLocalFiles(): (LocalFile | LocalFolder)[] {
     try {
@@ -39,7 +22,6 @@ function setLocalFiles(files: (LocalFile | LocalFolder)[]) {
     localStorage.setItem("creatives_upload", JSON.stringify(files));
 }
 
-// Recursively parse dropped items (files & folders)
 async function parseItems(items: DataTransferItemList): Promise<(LocalFile | LocalFolder)[]> {
     const result: (LocalFile | LocalFolder)[] = [];
 
@@ -103,8 +85,8 @@ export default function CreativesUploadPage() {
     const [showSplash, setShowSplash] = useState(true);
     const [clientName, setClientName] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { t } = useLanguage();
 
-    // Fetch the "Creatives" folder for the current user
     useEffect(() => {
         async function fetchCreativesFolder() {
             try {
@@ -115,34 +97,30 @@ export default function CreativesUploadPage() {
                 );
                 if (creatives) setCreativesFolderId(creatives.id);
             } catch (err) {
-                toast.error("Failed to fetch Creatives folder.");
+                toast.error(t("assets.fetchCreativesError") || "Failed to fetch Creatives folder.");
             }
         }
         fetchCreativesFolder();
-    }, []);
+    }, [t]);
 
-    // Load local files on mount
     useEffect(() => {
         setTreeData(getLocalFiles());
     }, []);
 
     useEffect(() => {
         async function fetchClientName() {
-            // Example: fetch from profile API
             try {
                 const res = await fetch("/api/dashboard/client");
                 const data = await res.json();
-                setClientName(data.name || "Client");
+                setClientName(data.name || t("assets.clientDefault") || "Client");
             } catch {
-                setClientName("Client");
+                setClientName(t("assets.clientDefault") || "Client");
             }
-            // Simulate loading effect
             setTimeout(() => setShowSplash(false), 1800);
         }
         fetchClientName();
-    }, []);
+    }, [t]);
 
-    // Handle file/folder drop (supports folders)
     const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
 
@@ -169,22 +147,23 @@ export default function CreativesUploadPage() {
         setTreeData(updatedTree);
         setLocalFiles(updatedTree);
 
-        toast.success(`${newItems.length} item(s) added to queue`);
+        toast.success(
+            t("assets.addedToQueue").replace("{{count}}", String(newItems.length)) ||
+            `${newItems.length} item(s) added to queue`
+        );
     };
 
-    // Prevent default drag events
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
 
-    // Recursively upload files, preserving folder structure
     async function uploadRecursive(items: (LocalFile | LocalFolder)[], parentPath: string) {
         for (const item of items) {
             if (item.type === "file") {
                 const formData = new FormData();
                 formData.append("file", item.file);
                 formData.append("parent_id", creativesFolderId!);
-                formData.append("folder_path", item.path); // Send relative path
+                formData.append("folder_path", item.path);
 
                 await fetch("/api/client/onboarding/creatives/upload", {
                     method: "POST",
@@ -196,9 +175,8 @@ export default function CreativesUploadPage() {
         }
     }
 
-    // Final submit handler: upload all files in localStorage to Supabase, preserving folder structure
     const handleFinalSubmit = async () => {
-        if (!creativesFolderId) return toast.error("Creatives folder not found.");
+        if (!creativesFolderId) return toast.error(t("assets.noCreativesFolder") || "Creatives folder not found.");
         setUploading(true);
 
         await uploadRecursive(treeData, "");
@@ -206,13 +184,12 @@ export default function CreativesUploadPage() {
         setUploading(false);
         setLocalFiles([]);
         setTreeData([]);
-        toast.success(`Uploaded all files! Redirecting...`);
+        toast.success(t("assets.uploadedAll") || "Uploaded all files! Redirecting...");
         setTimeout(() => {
             window.location.href = "/dashboard/client";
         }, 1500);
     };
 
-    // Skip handler
     const handleSkip = () => {
         setLocalFiles([]);
         setTreeData([]);
@@ -223,7 +200,6 @@ export default function CreativesUploadPage() {
         const map: Record<string, TreeViewElement & { children?: TreeViewElement[] }> = {};
         const roots: TreeViewElement[] = [];
 
-        // Initialize map
         flat.forEach(item => {
             map[item.id] = {
                 id: item.id,
@@ -232,7 +208,6 @@ export default function CreativesUploadPage() {
             };
         });
 
-        // Assign children based on parentId
         flat.forEach(item => {
             if (item.parentId && map[item.parentId]) {
                 if (!map[item.parentId].children) map[item.parentId].children = [];
@@ -246,22 +221,25 @@ export default function CreativesUploadPage() {
     }
 
     function handleRemove(id: string) {
-        // Recursively remove item and its children from treeData
-        function removeRecursive(items: (LocalFile | LocalFolder)[], targetId: string): (LocalFile | LocalFolder)[] {
-            return items
-                .filter(item => item.id !== targetId)
-                .map(item => {
-                    if (item.type === "folder" && item.children) {
-                        return {
-                            ...item,
-                            children: removeRecursive(item.children, targetId),
-                        };
+        // Collect all descendant IDs for cascade delete
+        function collectDescendantIds(items: (LocalFile | LocalFolder)[], targetId: string): Set<string> {
+            const ids = new Set<string>();
+            function recurse(currentId: string) {
+                ids.add(currentId);
+                items.forEach(item => {
+                    if (item.parentId === currentId) {
+                        recurse(item.id);
                     }
-                    return item;
                 });
+            }
+            recurse(targetId);
+            return ids;
         }
 
-        const updated = removeRecursive(treeData, id);
+        const descendantIds = collectDescendantIds(treeData, id);
+
+        // Remove all items whose id is in descendantIds
+        const updated = treeData.filter(item => !descendantIds.has(item.id));
         setTreeData(updated);
         setLocalFiles(updated);
     }
@@ -277,7 +255,7 @@ export default function CreativesUploadPage() {
                             onClick={() => handleRemove(el.id)}
                             type="button"
                         >
-                            Remove
+                            {t("assets.remove") || "Remove"}
                         </button>
                     </div>
                     {renderTree(el.children)}
@@ -290,7 +268,7 @@ export default function CreativesUploadPage() {
                             className="ml-2 text-xs text-red-500 hover:underline cursor-pointer"
                             onClick={() => handleRemove(el.id)}
                         >
-                            Remove
+                            {t("assets.remove") || "Remove"}
                         </span>
                     </span>
                 </File>
@@ -302,8 +280,8 @@ export default function CreativesUploadPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E84912]/10 via-white to-[#438D34]/10">
                 <Loader
-                    title={`Before we finish some changes for ${clientName}...`}
-                    subtitle="Please wait while we prepare everything for you"
+                    title={t("assets.splashTitle").replace("{{client}}", clientName) || `Before we finish some changes for ${clientName}...`}
+                    subtitle={t("assets.splashSubtitle") || "Please wait while we prepare everything for you"}
                     size="md"
                 />
             </div>
@@ -318,16 +296,20 @@ export default function CreativesUploadPage() {
                         <CloudUpload size={56} className="text-[#F97316] animate-pulse drop-shadow" />
                     </div>
                     <h2 className="text-2xl font-bold text-[#E84912] text-center flex items-center gap-2">
-                        Uploading your assets...
+                        {t("assets.uploading") || "Uploading your assets..."}
                     </h2>
                     <span className="text-gray-600 text-center mb-2">
-                        Please wait while we securely upload your files and folders.<br />
-                        <span className="text-xs text-[#EA6D51]">Do not close this window.</span>
+                        {t("assets.uploadingDesc") || (
+                            <>
+                                Please wait while we securely upload your files and folders.<br />
+                                <span className="text-xs text-[#EA6D51]">Do not close this window.</span>
+                            </>
+                        )}
                     </span>
                     <div className="w-64 h-3 bg-orange-100 rounded-full overflow-hidden shadow">
                         <div className="h-full bg-gradient-to-r from-[#E84912] via-[#F97316] to-[#EA6D51] animate-upload-progress" style={{ width: "80%" }} />
                     </div>
-                    <span className="text-[#E84912] font-semibold animate-pulse mt-2">Uploading...</span>
+                    <span className="text-[#E84912] font-semibold animate-pulse mt-2">{t("assets.uploading") || "Uploading..."}</span>
                 </div>
             </div>
         );
@@ -339,12 +321,16 @@ export default function CreativesUploadPage() {
                 {/* Left: Upload UI */}
                 <div className="flex-1 flex flex-col justify-center px-8 py-12">
                     <h2 className="text-3xl font-extrabold mb-2 text-[#E84912] flex items-center gap-2">
-                        Upload Your Assets
+                        {t("assets.uploadTitle") || "Upload Your Assets"}
                     </h2>
                     <p className="mb-4 text-gray-800">
-                        Drag and drop files or folders below.<br />
-                        All uploads will go to your <b className="text-black">Creatives</b> folder.<br />
-                        <span className="text-xs text-gray-500">You can skip this step if you want.</span>
+                        {t("assets.uploadDesc") || (
+                            <>
+                                Drag and drop files or folders below.<br />
+                                All uploads will go to your <b className="text-black">Creatives</b> folder.<br />
+                                <span className="text-xs text-gray-500">You can skip this step if you want.</span>
+                            </>
+                        )}
                     </p>
                     <div
                         ref={dropRef}
@@ -356,14 +342,14 @@ export default function CreativesUploadPage() {
                             <CloudUpload size={48} className="text-black drop-shadow animate-pulse" />
                         </div>
                         <span className="text-black font-semibold mb-1 text-lg">
-                            Drop files or folders here
+                            {t("assets.dropHere") || "Drop files or folders here"}
                         </span>
                         <span className="text-gray-500 text-xs mb-2">
-                            You can drag multiple files or entire folders
+                            {t("assets.dragMultiple") || "You can drag multiple files or entire folders"}
                         </span>
                         {uploading && (
                             <div className="w-full flex flex-col items-center mt-2">
-                                <span className="text-black font-semibold mb-1 animate-pulse">Uploading...</span>
+                                <span className="text-black font-semibold mb-1 animate-pulse">{t("assets.uploading") || "Uploading..."}</span>
                                 <div className="w-2/3 h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div className="h-full bg-black animate-upload-progress" style={{ width: "80%" }} />
                                 </div>
@@ -371,10 +357,13 @@ export default function CreativesUploadPage() {
                         )}
                     </div>
                     <div className="mb-6">
-                        <h3 className="font-semibold mb-2 text-black">Queued Files/Folders:</h3>
-                        <div className="border border-black rounded-xl p-4 bg-gray-50 min-h-[48px] flex flex-col justify-center shadow-sm">
+                        <h3 className="font-semibold mb-2 text-black">{t("assets.queued") || "Queued Files/Folders:"}</h3>
+                        <div
+                            className="border border-black rounded-xl p-4 bg-gray-50 min-h-[48px] flex flex-col justify-center shadow-sm overflow-y-auto"
+                            style={{ maxHeight: "260px" }} // Adjust maxHeight as needed
+                        >
                             {buildNestedTree(treeData).length === 0 ? (
-                                <span className="text-gray-500 text-sm text-center">No files or folders yet.</span>
+                                <span className="text-gray-500 text-sm text-center">{t("assets.noFiles") || "No files or folders yet."}</span>
                             ) : (
                                 <Tree elements={buildNestedTree(treeData)}>
                                     {renderTree(buildNestedTree(treeData))}
@@ -383,13 +372,15 @@ export default function CreativesUploadPage() {
                         </div>
                     </div>
                     <div className="flex justify-between mt-4">
-                        <Button variant="outline" className="rounded-lg border-black text-black hover:bg-gray-100" onClick={handleSkip}>Skip</Button>
+                        <Button variant="outline" className="rounded-lg border-black text-black hover:bg-gray-100" onClick={handleSkip}>
+                            {t("assets.skip") || "Skip"}
+                        </Button>
                         <Button
                             className="bg-black text-white font-bold rounded-lg shadow-md hover:bg-gray-900"
                             onClick={handleFinalSubmit}
                             disabled={uploading || treeData.length === 0}
                         >
-                            Final Submit
+                            {t("assets.finalSubmit") || "Final Submit"}
                         </Button>
                     </div>
                 </div>

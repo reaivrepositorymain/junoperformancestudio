@@ -72,6 +72,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DndContext, useDroppable } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
+import TopbarLanguageSelector from "@/components/TopbarLanguageSelector";
 import { supabase } from "@/lib/supabase";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -384,6 +385,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                         </span>
                                     </button>
                                 </div>
+
+                                {/* Language Selector */}
+                                <TopbarLanguageSelector />
 
                                 {/* Wonderful Hamburger Menu */}
                                 <div className="relative">

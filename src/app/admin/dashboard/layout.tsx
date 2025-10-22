@@ -45,6 +45,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import TopbarLanguageSelector from "@/components/TopbarLanguageSelector";
 
 const junoColors = [
     "#E84912", "#F6A100", "#D7770F", "#53B36A", "#438D34",
@@ -208,6 +209,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                         </span>
                                     </button>
                                 </div>
+
+                                {/* Language Selector */}
+                                <TopbarLanguageSelector />
 
                                 {/* Admin Menu */}
                                 <div className="relative">

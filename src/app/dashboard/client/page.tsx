@@ -50,6 +50,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AssetType, DirectoryItem } from "@/types/client-dashboard";
+import { useLanguage } from "@/context/LanguageProvider";
 
 export default function DashboardClientPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -82,6 +83,7 @@ export default function DashboardClientPage() {
   const [folderSelectionType, setFolderSelectionType] = useState<"existing" | "new">("existing");
   const [previewAsset, setPreviewAsset] = useState<AssetType | null>(null);
   const SUPABASE_URL = "https://orzqvkuqzvnltakapxrh.supabase.co/storage/v1/object/public/user-assets/";
+  const { t } = useLanguage();
 
   function getPublicUrl(storagePath: string) {
     return `${SUPABASE_URL}${storagePath}`;
@@ -712,7 +714,9 @@ export default function DashboardClientPage() {
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 className="tracking-tighter text-2xl md:text-3xl font-bold text-gray-900">
-              Welcome, <span className="font-cursive tracking-normal text-[#E84912]">{user?.name || "Loading..."}!</span> These are your assets.
+              {t("dashboard.welcome") || "Welcome"},{" "}
+              <span className="font-cursive tracking-normal text-[#E84912]">{user?.name || t("dashboard.loading") || "Loading..."}!</span>{" "}
+              {t("dashboard.assetsTitle") || "These are your assets."}
             </h1>
             <div className="flex items-center gap-3">
               {/* Mobile Menu Toggle */}
@@ -728,14 +732,14 @@ export default function DashboardClientPage() {
           <div className="flex flex-col sm:flex-row gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
-              <Label htmlFor="search-files" className="sr-only">Search files</Label>
+              <Label htmlFor="search-files" className="sr-only">{t("dashboard.searchFiles") || "Search files"}</Label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
               <Input
                 id="search-files"
                 type="text"
-                placeholder="Search files..."
+                placeholder={t("dashboard.searchFilesPlaceholder") || "Search files..."}
                 className="pl-10 pr-3 py-2"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -747,13 +751,13 @@ export default function DashboardClientPage() {
               <Filter className="h-4 w-4 text-gray-400" />
               <Select value={filterType} onValueChange={setFilterType}>
                 <SelectTrigger className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E84912] focus:border-transparent">
-                  <SelectValue placeholder="All Types" />
+                  <SelectValue placeholder={t("dashboard.allTypes") || "All Types"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="folder">Folders</SelectItem>
-                  <SelectItem value="file">Documents</SelectItem>
-                  <SelectItem value="image">Images</SelectItem>
+                  <SelectItem value="all">{t("dashboard.allTypes") || "All Types"}</SelectItem>
+                  <SelectItem value="folder">{t("dashboard.folders") || "Folders"}</SelectItem>
+                  <SelectItem value="file">{t("dashboard.documents") || "Documents"}</SelectItem>
+                  <SelectItem value="image">{t("dashboard.images") || "Images"}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -762,12 +766,12 @@ export default function DashboardClientPage() {
             <div className="min-w-[150px]">
               <Select value={sort} onValueChange={setSort}>
                 <SelectTrigger className="px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E84912] focus:border-transparent">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={t("dashboard.sortBy") || "Sort by"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="name">Sort by Name</SelectItem>
-                  <SelectItem value="type">Sort by Type</SelectItem>
-                  <SelectItem value="date">Sort by Date</SelectItem>
+                  <SelectItem value="name">{t("dashboard.sortByName") || "Sort by Name"}</SelectItem>
+                  <SelectItem value="type">{t("dashboard.sortByType") || "Sort by Type"}</SelectItem>
+                  <SelectItem value="date">{t("dashboard.sortByDate") || "Sort by Date"}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -776,9 +780,9 @@ export default function DashboardClientPage() {
           {/* Results Count */}
           <div className="flex items-center justify-between text-sm text-gray-600">
             <span>
-              {filteredFiles.length} {filteredFiles.length === 1 ? 'item' : 'items'}
-              {search && ` matching "${search}"`}
-              {filterType !== "all" && ` in ${filterType}s`}
+              {filteredFiles.length} {filteredFiles.length === 1 ? t("dashboard.item") || 'item' : t("dashboard.items") || 'items'}
+              {search && ` ${t("dashboard.matching") || "matching"} "${search}"`}
+              {filterType !== "all" && ` ${t("dashboard.in") || "in"} ${t(`dashboard.${filterType}s`) || filterType + "s"}`}
             </span>
             {(search || filterType !== "all") && (
               <button
@@ -788,7 +792,7 @@ export default function DashboardClientPage() {
                 }}
                 className="text-[#E84912] hover:text-[#d63d0e] font-medium"
               >
-                Clear filters
+                {t("dashboard.clearFilters") || "Clear filters"}
               </button>
             )}
           </div>
@@ -803,7 +807,7 @@ export default function DashboardClientPage() {
                 href="#"
                 onClick={() => navigateToFolder([])}
               >
-                Home
+                {t("dashboard.home") || "Home"}
               </BreadcrumbLink>
             </BreadcrumbItem>
             {currentPath.map((folder, idx) => (
@@ -830,7 +834,7 @@ export default function DashboardClientPage() {
         <div className="flex flex-col gap-4">
           {loading ? (
             <div className="flex items-center justify-center py-12 text-gray-500">
-              Loading...
+              {t("dashboard.loading") || "Loading..."}
             </div>
           ) : filteredFiles.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
@@ -842,7 +846,7 @@ export default function DashboardClientPage() {
                 glassEffect={true}
                 className="group relative w-full max-w-xl h-20 flex flex-row items-center justify-center border-2 border-dashed border-gray-400 rounded-2xl cursor-pointer hover:border-[#E84912] transition-all duration-300"
                 onClick={() => setShowAddDialog(true)}
-                title="Add New File or Folder"
+                title={t("dashboard.addNewFileOrFolder") || "Add New File or Folder"}
               >
                 <div className="flex flex-row items-center justify-center w-full gap-6 px-8">
                   <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#E84912]/10 transition-all duration-300">
@@ -852,10 +856,10 @@ export default function DashboardClientPage() {
                   </div>
                   <div className="flex flex-row flex-1 items-center justify-between">
                     <span className="font-medium text-gray-500 group-hover:text-[#E84912] transition-colors text-base">
-                      Add New File or Folder
+                      {t("dashboard.addNewFileOrFolder") || "Add New File or Folder"}
                     </span>
                     <span className="text-sm text-gray-400 ml-4">
-                      You don&apos;t have any files or folders yet. Click here to upload or create your first asset!
+                      {t("dashboard.noFilesYet") || "You don't have any files or folders yet. Click here to upload or create your first asset!"}
                     </span>
                   </div>
                 </div>
@@ -1021,7 +1025,7 @@ export default function DashboardClientPage() {
         <div className="h-full p-6 flex flex-col overflow-hidden">
           {/* Mobile Header */}
           <div className="flex items-center justify-between mb-6 lg:hidden">
-            <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t("dashboard.dashboard") || "Dashboard"}</h2>
             <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1044,7 +1048,7 @@ export default function DashboardClientPage() {
 
             {/* Top Campaigns Section - Scrollable in the Middle */}
             <div className="flex-1 overflow-y-auto space-y-4 mt-4">
-              <h2 className="text-lg font-bold text-gray-900">Campaigns</h2>
+              <h2 className="text-lg font-bold text-gray-900">{t("dashboard.campaigns") || "Campaigns"}</h2>
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {campaigns.map((campaign, index) => (
                   <div
@@ -1085,7 +1089,7 @@ export default function DashboardClientPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-4 bg-[#E84912] rounded-full"></div>
-                  <h2 className="text-lg font-bold text-gray-900">Upcoming Meetings</h2>
+                  <h2 className="text-lg font-bold text-gray-900">{t("dashboard.upcomingMeetings") || "Upcoming Meetings"}</h2>
                 </div>
                 <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                   {meetings.length}
@@ -1150,7 +1154,7 @@ export default function DashboardClientPage() {
                       </span>
                     </div>
                     <span className="font-medium text-gray-600 group-hover:text-[#E84912] transition-colors text-xs">
-                      See All
+                      {t("dashboard.seeAll") || "See All"}
                     </span>
                   </button>
                 </div>

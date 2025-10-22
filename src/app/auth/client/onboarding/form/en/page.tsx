@@ -242,6 +242,18 @@ export default function ClientOnboardingForm() {
         </div>
       </div>
 
+      {/* Top-left Back Button */}
+      <Button
+        variant="outline"
+        className="absolute z-99 top-6 left-6 px-6 py-3 mt-4 rounded-xl border-[#EA6D51] text-black hover:bg-orange-50 font-semibold transition-all animate-fade-in-up"
+        style={{ animationDelay: '0.1s' }}
+        onClick={async () => {
+          router.push("/auth/client/onboarding");
+        }}
+      >
+        ← Back to Onboarding Home
+      </Button>
+
       {/* Main question area */}
       <div className="flex-1 w-full flex flex-col items-center justify-center z-10">
         <AnimatePresence mode="wait">

@@ -9,16 +9,18 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageProvider";
 
 export default function ResetPasswordPage() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { t } = useLanguage();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) {
-            toast.error("Please enter your email.");
+            toast.error(t("login.email") + " " + t("login.required") || "Please enter your email.");
             return;
         }
         setLoading(true);
@@ -29,11 +31,11 @@ export default function ResetPasswordPage() {
         });
         setLoading(false);
         if (res.ok) {
-            toast.success("If your email exists, a reset link has been sent.");
+            toast.success(t("login.resetLinkSent") || "If your email exists, a reset link has been sent.");
             setEmail("");
         } else {
             const data = await res.json();
-            toast.error(data.error || "Failed to send reset link.");
+            toast.error(data.error || t("login.resetFailed") || "Failed to send reset link.");
         }
     };
 
@@ -59,23 +61,23 @@ export default function ResetPasswordPage() {
                 className="absolute top-6 left-6 flex items-center gap-2 text-black hover:text-[#E84912] font-semibold transition z-10"
             >
                 <ArrowLeft className="w-5 h-5" />
-                <span className="hidden sm:inline">Back to Login</span>
+                <span className="hidden sm:inline">{t("login.backToLogin") || "Back to Login"}</span>
             </button>
             <div className="relative z-10 w-full flex flex-col items-center">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Reset Password</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{t("login.resetPassword") || "Reset Password"}</h1>
                 <p className="text-gray-600 mb-4 text-center max-w-md">
-                    Enter your company email address to receive a password reset link.
+                    {t("login.resetDesc") || "Enter your company email address to receive a password reset link."}
                 </p>
                 <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
                     <div>
                         <Label className="mb-2 font-medium text-gray-700 flex items-center">
-                            Company Email Address
+                            {t("login.companyEmail") || "Company Email Address"}
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <span className="cursor-pointer text-[#E84912] font-semibold ">?</span>
                                 </TooltipTrigger>
                                 <TooltipContent side="right">
-                                    Please use your <span className="font-semibold">@juno.com</span> email address associated with your account.
+                                    {t("login.companyEmailTooltip") || <>Please use your <span className="font-semibold">@juno.com</span> email address associated with your account.</>}
                                 </TooltipContent>
                             </Tooltip>
                         </Label>
@@ -83,7 +85,7 @@ export default function ResetPasswordPage() {
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
-                            placeholder="companyname@juno.com"
+                            placeholder={t("login.companyEmailPlaceholder") || "companyname@juno.com"}
                             required
                             autoComplete="email"
                             className="mt-1 py-6"
@@ -94,7 +96,7 @@ export default function ResetPasswordPage() {
                         disabled={loading}
                         className="w-full bg-black hover:bg-[#E84912] text-white font-bold py-6 rounded-lg transition"
                     >
-                        {loading ? "Sending..." : "Send Reset Link"}
+                        {loading ? (t("login.sending") || "Sending...") : (t("login.sendResetLink") || "Send Reset Link")}
                     </Button>
                 </form>
             </div>

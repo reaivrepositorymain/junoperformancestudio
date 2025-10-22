@@ -12,7 +12,6 @@ export default function ResetPasswordConfirmPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const userId = searchParams.get("id");
-
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);

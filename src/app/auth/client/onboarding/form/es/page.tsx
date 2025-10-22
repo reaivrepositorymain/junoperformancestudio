@@ -222,6 +222,18 @@ export default function ClientOnboardingForm() {
         </div>
       </div>
 
+      {/* Top-left Back Button */}
+      <Button
+        variant="outline"
+        className="absolute z-99 top-6 left-6 px-6 py-3 mt-4 rounded-xl border-[#EA6D51] text-black hover:bg-orange-50 font-semibold transition-all animate-fade-in-up"
+        style={{ animationDelay: '0.1s' }}
+        onClick={async () => {
+          router.push("/auth/client/onboarding");
+        }}
+      >
+        ← Volver a Inicio de Registro
+      </Button>
+
       {/* Área principal de la pregunta */}
       <div className="flex-1 w-full flex flex-col items-center justify-center z-10">
         <AnimatePresence mode="wait">
@@ -279,10 +291,9 @@ export default function ClientOnboardingForm() {
                         key={opt.value}
                         htmlFor={opt.value}
                         className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 shadow-sm
-                          ${
-                            answers[current.key] === opt.value
-                              ? "border-[#E84912] bg-[#E84912]/10 scale-105"
-                              : "border-gray-200 hover:border-[#E84912]/30"
+                          ${answers[current.key] === opt.value
+                            ? "border-[#E84912] bg-[#E84912]/10 scale-105"
+                            : "border-gray-200 hover:border-[#E84912]/30"
                           }
                         `}
                       >
