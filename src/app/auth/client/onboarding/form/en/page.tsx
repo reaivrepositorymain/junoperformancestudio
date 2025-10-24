@@ -269,7 +269,7 @@ export default function ClientOnboardingForm() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-2xl font-cursive tracking-wide sm:text-4xl font-bold text-gray-900 mb-2 text-center drop-shadow"
+              className="text-2xl tracking-tighter sm:text-4xl font-bold text-gray-900 mb-2 text-center drop-shadow"
             >
               {current.label}
               {current.required && (

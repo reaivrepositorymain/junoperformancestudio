@@ -4,43 +4,20 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import AdminNotificationDropdown from "@/components/AdminNotificationDropdown";
 import {
-    LayoutDashboard,
-    Users,
-    FileText,
-    Settings,
     LogOut,
     Menu,
     X,
-    Bell,
-    Search,
-    User,
-    BarChart3,
-    Shield,
-    Database,
-    Activity,
     Flag,
     Users2Icon,
-    Mail,
-    Calendar,
-    Radio,
-    CreditCard,
-    Package,
-    UserCheck,
-    AlertTriangle,
-    Zap,
     ScreenShare,
-    Globe,
-    Lock,
-    Eye,
+    Calendar1,
     Clipboard,
-    PieChart,
     TrendingUp,
     HandCoins,
     BriefcaseBusiness,
-    Server,
-    File,
-    HardDrive
+    File
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Toaster } from "@/components/ui/sonner";
@@ -143,11 +120,33 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }, [router]);
 
     useEffect(() => {
-        // Mock admin user data
-        setUser({
-            name: "Admin User",
-            role: "Administrator"
-        });
+        const fetchAdminUser = async () => {
+            try {
+                const res = await fetch("/api/admin/dashboard", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUser({
+                        name: data.name,
+                        profile_image: data.profile_image,
+                        role: data.role,
+                    });
+                } else {
+                    setUser({
+                        name: "Admin User",
+                        role: "Administrator"
+                    });
+                }
+            } catch {
+                setUser({
+                    name: "Admin User",
+                    role: "Administrator"
+                });
+            }
+        };
+        fetchAdminUser();
     }, []);
 
     const handleLogout = async () => {
@@ -177,15 +176,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <div className="flex justify-between items-center h-16">
                             {/* Logo with enhanced styling */}
                             <div className="flex items-center space-x-2">
-                                <div className="flex items-center space-x-2">
-                                    <h1 className="font-brand text-2xl font-bold tracking-tight text-gray-900">
-                                        JUNO
-                                    </h1>
-                                    <span className="text-[#E84912] text-sm font-semibold bg-[#E84912]/10 px-2 py-1 rounded-md">
-                                        ADMIN
-                                    </span>
-                                </div>
-
+                                <Link href="/admin/dashboard" className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-2">
+                                        <h1 className="font-brand text-2xl font-bold tracking-tight text-gray-900">
+                                            JUNO
+                                        </h1>
+                                        <span className="text-[#E84912] text-sm font-semibold bg-[#E84912]/10 px-2 py-1 rounded-md">
+                                            ADMIN
+                                        </span>
+                                    </div>
+                                </Link>
                                 {/* Breadcrumb */}
                                 <div className="hidden md:flex items-center space-x-1">
                                     <div className="h-4 w-px bg-gray-300"></div>
@@ -198,17 +198,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                             {/* Right side - Enhanced profile and actions */}
                             <div className="flex items-center space-x-3">
                                 {/* Notifications with badge */}
-                                <div className="relative">
-                                    <button
-                                        type="button"
-                                        className="bg-gray-50 border border-gray-200 p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E84912] transition-all duration-200"
-                                    >
-                                        <Bell className="h-5 w-5" />
-                                        <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center">
-                                            <span className="text-xs text-white font-bold">7</span>
-                                        </span>
-                                    </button>
-                                </div>
+                                <AdminNotificationDropdown />
 
                                 {/* Language Selector */}
                                 <TopbarLanguageSelector />
@@ -254,10 +244,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                     <div className="space-y-2">
                                         <button
                                             className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
-                                            onClick={() => router.push("/admin/dashboard/client/create")}
+                                            onClick={() => router.push("/admin/dashboard/meeting")}
                                         >
-                                            <UserCheck className="h-4 w-4" />
-                                            <span>Add New Client</span>
+                                            <Calendar1 className="h-4 w-4" />
+                                            <span>Meetings</span>
                                         </button>
                                         <button className="flex items-center space-x-3 text-gray-600 hover:text-[#E84912] hover:bg-gray-50 p-2 rounded-lg transition-all duration-200 w-full text-left"
                                             onClick={() => router.push("/admin/dashboard/client/listing")}
